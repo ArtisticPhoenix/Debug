@@ -1,0 +1,27 @@
+{
+	"name" : "artisticphoenix/debugger",
+	"description" : "PHP Debugger",
+	"license" : "GPL-3.0",
+	"keywords" : [
+		"Lexer Parser Tokenizer"
+	],
+	"autoload" : {
+		"psr-4" : {
+			"ArtisticPhoenix\\Debugger\\" : "src"
+		}
+	},
+	"support" : {
+		"email" : "artisticphoenix@gmail.com"
+	},
+	"require": {
+		"php": "^5.6"
+	},
+	"type" : "library",
+	"authors" : [{
+			"name" : "Hugh Durham III",
+			"email" : "artisticphoenix@gmail.com",
+			"homepage" : "http://www.artisticphoenix.com",
+			"role" : "Author"
+		}
+	]
+}
