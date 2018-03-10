@@ -1,2 +1,0 @@
-# Debugger
-PHP debuging library

@@ -1,20 +1,23 @@
 {
-	"name" : "artisticphoenix/debugger",
-	"description" : "PHP Debugger",
+	"name" : "evo/debugger",
+	"description" : "Debugger(circular safe printer)",
 	"license" : "GPL-3.0",
 	"keywords" : [
-		"Lexer Parser Tokenizer"
+		"debug"
 	],
 	"autoload" : {
 		"psr-4" : {
-			"ArtisticPhoenix\\Debugger\\" : "src"
+			"evo\\debug" : "src/evo/debug"
 		}
 	},
 	"support" : {
-		"email" : "artisticphoenix@gmail.com"
+		"email" : "artisticphoenix@gmail.com",
+		"wiki" : "https://github.com/ArtisticPhoenix/Debugger/wiki",
+		"source" : "https://github.com/ArtisticPhoenix/Debugger.git",
+		"issues" : "https://github.com/ArtisticPhoenix/Debugger/issues"
 	},
-	"require": {
-		"php": "^5.6"
+	"require" : {
+		"php" : "^5.6"
 	},
 	"type" : "library",
 	"authors" : [{
@@ -23,5 +26,6 @@
 			"homepage" : "http://www.artisticphoenix.com",
 			"role" : "Author"
 		}
-	]
+	],
+	"minimum-stability" : "beta"
 }
