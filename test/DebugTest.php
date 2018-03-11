@@ -2,17 +2,37 @@
 use PHPUnit\Framework\TestCase;
 use evo\debug\Debug;
 
+/**
+ *
+ * (c) 2016 Hugh Durham III
+ *
+ * For license information please view the LICENSE file included with this source code.
+ *
+ * Debug class - circular refrence safe
+ *
+ * @author HughDurham {ArtisticPhoenix}
+ * @package Evo
+ * @subpackage debug
+ *
+ */
 class DebugTest extends TestCase
 {
+    /**
+     * 
+     * @var Debug
+     */
     protected $Debug;
     
-
+    /**
+     * 
+     */
     public function setup()
     {
         $this->Debug = new Debug(false, 4, Debug::SHOW_ALL);
     }
     
     /**
+     * 
      * @group DebugTest
      * @group testBoolean
      */
@@ -23,6 +43,7 @@ class DebugTest extends TestCase
     }
  
     /**
+     * 
      * @group DebugTest
      * @group testIntegers
      */
@@ -33,6 +54,7 @@ class DebugTest extends TestCase
     }
     
     /**
+     * 
      * @group DebugTest
      * @group testFloats
      */
@@ -47,30 +69,38 @@ class DebugTest extends TestCase
     }
     
     /**
+     * 
      * @group DebugTest
      * @group testStrings
      */
     public function testStrings()
     {
-        $this->assertEquals('string(5) "hello"', $this->Debug->debugVar("hello"));
+        $this->assertEquals('string(0) ""', $this->Debug->debugVar(''));
         
-        $this->assertEquals('string(5) ""', $this->Debug->debugVar(''));
+        $this->assertEquals('string(11) "hello world"', $this->Debug->debugVar('hello world'));
         
-        $this->assertEquals('string(5) "with single quote"', $this->Debug->debugVar("~`!@#$%^&*()_+-={}[]|\\;',./:\"M<>"));
+        $this->assertEquals('string(32) "~`!@#$%^&*()_+-={}[]|\\\;\\\',./:\"M<>"', $this->Debug->debugVar('~`!@#$%^&*()_+-={}[]|\\;\',./:"M<>'));
         
+        $this->Debug->setHtmlOutput(true);
+        
+        $this->assertEquals('string(30) "&lt;strong style=\\"\\" &gt;html&lt;strong&gt;"', $this->Debug->debugVar('<strong style="" >html<strong>'));
+        
+        
+        $this->Debug->setHtmlOutput(false);
          
-        $multiLine = "
+        $multiLine = "";
+        $this->assertEquals(
+            'string(35)\s"\nThe\sred\sfox\njumpped\sover\nthe\sbox.\n"',
+            $this->showWhitespace($this->Debug->debugVar('
 The red fox
 jumpped over
 the box.
-";
-        $this->assertEquals(
-            'string('.strlen($multiLine).') "'.$multiLine.'"',
-            $this->Debug->debugVar($multiLine)
+'))
         );
     }
     
     /**
+     * 
      * @group DebugTest
      * @group testResourses
      */
@@ -84,6 +114,7 @@ the box.
     }
     
     /**
+     * 
      * @group DebugTest
      * @group testNull
      */
@@ -93,6 +124,7 @@ the box.
     }
     
     /**
+     * 
      * @group DebugTest
      * @group testUnkown
      */
@@ -105,6 +137,7 @@ the box.
     }
     
     /**
+     * 
      * @group DebugTest
      * @group testArray
      */
@@ -114,36 +147,86 @@ the box.
         $this->assertEquals('array(0){}', $this->Debug->debugVar($array));
         //test numerical array
         $array = [1];
-        $this->assertEquals('array(1){[0]=>int(1),}', $this->Debug->debugVar($array));
+        $this->assertEquals(
+            'array(1){\n\t[0]\s=>\sint(1),\n}',
+            $this->showWhitespace($this->Debug->debugVar($array))
+        );
         //test assoc array
         $array = ['foo' => 1];
-        $this->assertEquals('array(1){["foo"]=>int(1),}', $this->Debug->debugVar($array));
+        $this->assertEquals(
+            'array(1){\n\t["foo"]\s=>\sint(1),\n}',
+            $this->showWhitespace($this->Debug->debugVar($array))
+        );
         //test nested array
         $array = [1,2,'array0'=>[1,2,'array1'=>[3,4,'array2'=>[5,6,'array3'=>[]]]]];
         $this->assertEquals(
-            'array(3){[0]=>int(1),[1]=>int(2),["array0"]=>array(3){[0]=>int(1),[1]=>int(2),["array1"]=>array(3){[0]=>int(3),[1]=>int(4),["array2"]=>array(3){::DEPTH_LIMIT::},},},}',
-            $this->Debug->debugVar($array)
+            'array(3){\n\t[0]\s=>\sint(1),\n\t[1]\s=>\sint(2),\n\t["array0"]\s=>\sarray(3){\n\t\t[0]\s=>\sint(1),\n\t\t[1]\s=>\sint(2),\n\t\t["array1"]\s=>\sarray(3){\n\t\t\t[0]\s=>\sint(3),\n\t\t\t[1]\s=>\sint(4),\n\t\t\t["array2"]\s=>\sarray(3){\n\t\t\t\t~DEPTH_LIMIT~\n\t\t\t},\n\t\t},\n\t},\n}',
+            $this->showWhitespace($this->Debug->debugVar($array))
         );
+    }
+    
+    /**
+     * 
+     * @group DebugTest
+     * @group testObject
+     */
+    public function testObject(){
+        $DebugTestItem = new DebugTestItem();
         
-        
-        /* $array[] = false;
-         $array[] = 1;
-         $array[] = 1.0;
-         $array[] = 'string';
-         $f = fopen("php://temp", "w");
-         $array[] = $f;
-         $g = fopen("php://temp", "w");
-         fclose($g);
-         $array[] = $g;
-         $array[] = null;
+       echo $this->Debug->debugVar($DebugTestItem);
+         
+        $this->assertEquals(
+            'object(DebugTestItem)#0\s(10)\s{\n\t["CONSTANT":constant]\s=>\sstring(8)\s"constant",\n\t["PUB_STATIC":public\sprivate]\s=>\sstring(10)\s"pub_static",\n\t["PRO_STATIC":protected\sprivate]\s=>\sstring(10)\s"pro_static",\n\t["PRI_STATIC":private\sprivate]\s=>\sstring(10)\s"pri_static",\n\t["pub":public]\s=>\sstring(3)\s"pub",\n\t["pro":protected]\s=>\sstring(3)\s"pro",\n\t["pri":private]\s=>\sstring(3)\s"pri",\n\t["array":public]\s=>\sarray(3){\n\t\t[0]\s=>\sint(0),\n\t\t["one"]\s=>\sint(1),\n\t\t["array"]\s=>\sarray(3){\n\t\t\t[0]\s=>\sstring(3)\s"two",\n\t\t\t[1]\s=>\sstring(5)\s"three",\n\t\t\t[2]\s=>\sstring(4)\s"four",\n\t\t},\n\t},\n\t["object":protected]\s=>\sobject(stdClass)#0\s(0)\s{},\n\t["self":private]\s=>\sobject(DebugTestItem)#0\s(0)\s{~CIRCULAR_REFRENCE~},\n}',
+            $this->showWhitespace($this->Debug->debugVar($DebugTestItem))
+        );        
+    }
+    
+    /**
+     *
+     * @group DebugTest
+     * @group testGetTraceFirstAsString
+     */
+    public function testGetTraceFirstAsString()
+    {    
+        $this->assertEquals('Output from FILE[ '.__FILE__.' ] on LINE[ '.__LINE__.' ]', $this->Debug->getTraceFirstAsString());
+    }
 
-         $this->assertEquals('array(0){}', $this->Debug->debugVar($array));
-
-         fclose($f);*/
+    /**
+     * 
+     * @param string $string
+     * @return mixed
+     */
+    protected function showWhitespace($string){
+        return str_replace(
+            ["\r\n", "\n", "\t", "\s", " "],
+            ['\n', '\n', '\t', '\s', '\s'],
+            $string
+        );
     }
 }
 
-class fakeObject
+class DebugTestItem
 {
     const CONSTANT = 'constant';
+    
+    public static $PUB_STATIC = 'pub_static';
+    protected static $PRO_STATIC = 'pro_static';
+    private static $PRI_STATIC = 'pri_static';
+    
+    public $pub = 'pub';
+    protected $pro = 'pro';
+    private $pri = 'pri';
+    
+    public $array = [
+        0,
+        'one' => 1,
+        'array' => ['two', 'three', 'four']
+    ];
+    protected $object;
+    private $self;
+    
+    public function __construct(){
+        $this->object = new stdClass();
+        $this->self = $this;
+    }   
 }

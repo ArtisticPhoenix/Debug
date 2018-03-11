@@ -119,9 +119,9 @@ class Debug
         'double'            => 'float(%s)',
         'string'            => 'string(%s) "%s"',
         'resource'          => 'resource(%s) of type (%s)',
-        'unknown'           => 'unknown(%s)',
+        'unknown type'           => 'unknown(%s)',
         'array'             => 'array(%s){%s}',
-        'array_item'        => '[%s] => %s,',
+        'array item'        => '[%s] => %s,',
         'object'            => 'object(%s)#%s (%s) {%s}',
         'property'          => '["%s":%s] => %s',
     ];
@@ -143,6 +143,11 @@ class Debug
      * @var int
      */
     protected $flags;
+    
+    /**
+     * @var int
+     */
+    protected $buffered = '';
     
     /**
      *
@@ -215,25 +220,102 @@ class Debug
     }
     
     //===================== Main ===============
-    
-    public function dump($input, $offset = 1)
+    /**
+     * 
+     * @param mixed $input
+     * @param int $offset
+     */
+    public function dump($input, $offset = 0)
     {
+        
+        $before = $this->htmlOutput ? '<pre>' : '';
+        $after = $this->htmlOutput ? '</pre>' : '';
+        
+        $ln = $this->indentLine();
+        
+        echo $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
+        $this->getTraceFirstAsString($offset) . $ln .
+        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
+        $this->debugVar($input) . $ln .
+        str_pad("", 90, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
     
-    public function export()
+    /**
+     *
+     * @param mixed $input
+     * @param int $offset
+     */
+    public function export($input, $offset = 0)
     {
+        
+        $before = $this->htmlOutput ? '<pre>' : '';
+        $after = $this->htmlOutput ? '</pre>' : '';
+        
+        $ln = $this->indentLine();
+        
+        return $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
+        $this->getTraceFirstAsString($offset) . $ln .
+        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
+        $this->debugVar($input) . $ln .
+        str_pad("", 90, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
     
-    public function start()
+    /**
+     *
+     * @param mixed $input
+     * @param int $offset
+     */
+    public function start($offset = 0)
     {
+        
+        $this->buffered = $this->getTraceFirstAsString($offset);
+        ob_start();
     }
     
-    public function end()
+    /**
+     *
+     * @param mixed $input
+     * @param int $offset
+     */
+    public function end($offset = 0)
     {
+        $output = ob_get_clean();
+        
+        $before = $this->htmlOutput ? '<pre>' : '';
+        $after = $this->htmlOutput ? '</pre>' : '';
+        
+        $ln = $this->indentLine();
+        
+        echo $before . str_pad("* ".__CLASS__."::start *", 90, "*", STR_PAD_BOTH) . $ln .
+        $this->buffered . $ln .
+        str_pad("", 90, ".", STR_PAD_BOTH) . $ln .
+        $output . $ln .
+        str_pad("", 90, ".", STR_PAD_BOTH) . $ln .
+        $this->getTraceFirstAsString($offset) . $ln .
+        str_pad(" ".__METHOD__." ", 90, "*", STR_PAD_BOTH) . $ln  . $ln . $after;
+        
+        $this->buffered = '';
     }
     
-    public function kill()
+    /**
+     *
+     * @param mixed $input
+     * @param int $offset
+     */
+    public function kill($input, $offset = 0)
     {
+        
+        $before = $this->htmlOutput ? '<pre>' : '';
+        $after = $this->htmlOutput ? '</pre>' : '';
+        
+        $ln = $this->indentLine();
+        
+        echo $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
+        $this->getTraceFirstAsString($offset) . $ln .
+        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
+        $this->debugVar($input) . $ln .
+        str_pad("", 90, "=", STR_PAD_BOTH) . $ln . $ln . $after;
+        exit;
     }
     
     /**
@@ -262,7 +344,7 @@ class Debug
             case 'string':
                 $len = strlen($var);
                 if ($this->htmlOutput) {
-                    $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8', false);
+                    $var = htmlspecialchars($var, ENT_NOQUOTES, 'UTF-8', false);
                 }
                 $var = addslashes($var);
                 
@@ -283,12 +365,12 @@ class Debug
                             //HTML escape keys
                             if (gettype($k) == 'string') {
                                 if ($this->htmlOutput) {
-                                    $k = htmlspecialchars($k, ENT_QUOTES, 'UTF-8', false);
+                                    $k = htmlspecialchars($k, ENT_NOQUOTES, 'UTF-8', false);
                                 }
                                 $k = '"'.$k.'"';
                             }
                             $_v = $this->debugVar($v, $level, $objInstances); //recursive
-                            $output .=  $ln . $this->indentLevel($level) . $this->templateVar('array_item', $k, $_v);
+                            $output .=  $ln . $this->indentLevel($level) . $this->templateVar('array item', $k, $_v);
                         }
                     } else {
                         $output .= $ln . $this->indentLevel($level) . self::$DEPTH_LIMIT;
@@ -296,7 +378,7 @@ class Debug
                     --$level;
                     $output .= $ln . $this->indentLevel($level);
                 }
-                return $this->templateVar($len, $output);
+                return $this->templateVar($type, $len, $output);
             case 'object':
                 $output = '';
                 $class = get_class($var);
@@ -314,7 +396,7 @@ class Debug
                     
                     if ($level < $this->depthLimit) {
                         $ReflectionObj = new \ReflectionObject($var);
-                        if (self::SHOW_CONSTANTS & $flags) {
+                        if ($this->hasFlag(self::SHOW_CONSTANTS)) {
                             //CONSTANTS
                             foreach ($ReflectionObj->getConstants() as $k => $v) {
                                 $output .= $ln . $this->indentLevel($level);
@@ -443,14 +525,17 @@ class Debug
     public function trace($offset = 0)
     {
         $trace = debug_backtrace(false);
-        
         foreach ($trace as $t) {
+           // print_r($t);
+           // print_r($offset);
             if ($t['file'] != __FILE__) {
                 break;
             }
+            
             ++$offset;
         }
-        return array_slice($trace, ($offset - count($trace)));
+        $arr = array_slice($trace, ($offset - count($trace)));
+        return $arr;
     }
     
     /**
@@ -530,7 +615,7 @@ class Debug
      */
     public function getTraceFirstAsString($offset = 0)
     {
-        $trace = self::getTraceFirst($offset);
+        $trace = self::getTraceFirst($offset); 
         return "Output from FILE[ {$trace['file']} ] on LINE[ {$trace['line']} ]";
     }
 }
