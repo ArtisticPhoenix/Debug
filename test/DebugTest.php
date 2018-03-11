@@ -18,13 +18,13 @@ use evo\debug\Debug;
 class DebugTest extends TestCase
 {
     /**
-     * 
+     *
      * @var Debug
      */
     protected $Debug;
     
     /**
-     * 
+     *
      */
     public function setup()
     {
@@ -32,7 +32,7 @@ class DebugTest extends TestCase
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testBoolean
      */
@@ -43,7 +43,7 @@ class DebugTest extends TestCase
     }
  
     /**
-     * 
+     *
      * @group DebugTest
      * @group testIntegers
      */
@@ -54,7 +54,7 @@ class DebugTest extends TestCase
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testFloats
      */
@@ -69,7 +69,7 @@ class DebugTest extends TestCase
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testStrings
      */
@@ -100,7 +100,7 @@ the box.
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testResourses
      */
@@ -114,7 +114,7 @@ the box.
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testNull
      */
@@ -124,7 +124,7 @@ the box.
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testUnkown
      */
@@ -137,7 +137,7 @@ the box.
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testArray
      */
@@ -166,19 +166,20 @@ the box.
     }
     
     /**
-     * 
+     *
      * @group DebugTest
      * @group testObject
      */
-    public function testObject(){
+    public function testObject()
+    {
         $DebugTestItem = new DebugTestItem();
         
-       echo $this->Debug->debugVar($DebugTestItem);
+        echo $this->Debug->debugVar($DebugTestItem);
          
         $this->assertEquals(
             'object(DebugTestItem)#0\s(10)\s{\n\t["CONSTANT":constant]\s=>\sstring(8)\s"constant",\n\t["PUB_STATIC":public\sprivate]\s=>\sstring(10)\s"pub_static",\n\t["PRO_STATIC":protected\sprivate]\s=>\sstring(10)\s"pro_static",\n\t["PRI_STATIC":private\sprivate]\s=>\sstring(10)\s"pri_static",\n\t["pub":public]\s=>\sstring(3)\s"pub",\n\t["pro":protected]\s=>\sstring(3)\s"pro",\n\t["pri":private]\s=>\sstring(3)\s"pri",\n\t["array":public]\s=>\sarray(3){\n\t\t[0]\s=>\sint(0),\n\t\t["one"]\s=>\sint(1),\n\t\t["array"]\s=>\sarray(3){\n\t\t\t[0]\s=>\sstring(3)\s"two",\n\t\t\t[1]\s=>\sstring(5)\s"three",\n\t\t\t[2]\s=>\sstring(4)\s"four",\n\t\t},\n\t},\n\t["object":protected]\s=>\sobject(stdClass)#0\s(0)\s{},\n\t["self":private]\s=>\sobject(DebugTestItem)#0\s(0)\s{~CIRCULAR_REFRENCE~},\n}',
             $this->showWhitespace($this->Debug->debugVar($DebugTestItem))
-        );        
+        );
     }
     
     /**
@@ -187,16 +188,17 @@ the box.
      * @group testGetTraceFirstAsString
      */
     public function testGetTraceFirstAsString()
-    {    
+    {
         $this->assertEquals('Output from FILE[ '.__FILE__.' ] on LINE[ '.__LINE__.' ]', $this->Debug->getTraceFirstAsString());
     }
 
     /**
-     * 
+     *
      * @param string $string
      * @return mixed
      */
-    protected function showWhitespace($string){
+    protected function showWhitespace($string)
+    {
         return str_replace(
             ["\r\n", "\n", "\t", "\s", " "],
             ['\n', '\n', '\t', '\s', '\s'],
@@ -225,8 +227,9 @@ class DebugTestItem
     protected $object;
     private $self;
     
-    public function __construct(){
+    public function __construct()
+    {
         $this->object = new stdClass();
         $this->self = $this;
-    }   
+    }
 }

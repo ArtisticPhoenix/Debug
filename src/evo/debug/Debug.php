@@ -221,13 +221,12 @@ class Debug
     
     //===================== Main ===============
     /**
-     * 
+     *
      * @param mixed $input
      * @param int $offset
      */
     public function dump($input, $offset = 0)
     {
-        
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
         
@@ -247,7 +246,6 @@ class Debug
      */
     public function export($input, $offset = 0)
     {
-        
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
         
@@ -267,7 +265,6 @@ class Debug
      */
     public function start($offset = 0)
     {
-        
         $this->buffered = $this->getTraceFirstAsString($offset);
         ob_start();
     }
@@ -304,7 +301,6 @@ class Debug
      */
     public function kill($input, $offset = 0)
     {
-        
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
         
@@ -526,8 +522,8 @@ class Debug
     {
         $trace = debug_backtrace(false);
         foreach ($trace as $t) {
-           // print_r($t);
-           // print_r($offset);
+            // print_r($t);
+            // print_r($offset);
             if ($t['file'] != __FILE__) {
                 break;
             }
@@ -615,7 +611,7 @@ class Debug
      */
     public function getTraceFirstAsString($offset = 0)
     {
-        $trace = self::getTraceFirst($offset); 
+        $trace = self::getTraceFirst($offset);
         return "Output from FILE[ {$trace['file']} ] on LINE[ {$trace['line']} ]";
     }
 }
