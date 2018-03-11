@@ -1,5 +1,5 @@
 {
-	"name" : "evo/debugger",
+	"name" : "evo/debug",
 	"description" : "Debugger(circular safe printer)",
 	"license" : "GPL-3.0",
 	"keywords" : [
@@ -7,7 +7,7 @@
 	],
 	"autoload" : {
 		"psr-4" : {
-			"evo\\debug" : "src/evo/debug"
+			"evo\\debug\\" : "src/evo/debug"
 		}
 	},
 	"support" : {

@@ -1,6 +1,8 @@
 <?php
 namespace evo\debug;
 
+use phpDocumentor\Reflection\Types\Resource;
+
 /**
  *
  * (c) 2016 Hugh Durham III
@@ -14,278 +16,287 @@ namespace evo\debug;
  * @subpackage debug
  *
  */
-class Debug{
-    /**
-     * indicate that our depth limit is reached
-     * @var string
-     */
-    const DEPTH_LIMIT = '#_DEPTH_LIMIT_#';
-    
-    
-    /**
-     * indicate a circular refrence
-     * @var string
-     */
-    const CIRCULAR_REFRENCE = '#_CIRCULAR_REFRENCE_#';
-    
-    /**
-     * sprint_f formating patterns
-     * @var string
-     */
-    const TYPE_BOOLEAN      = "bool(%s)";
-    const TYPE_INTEGER      = "int(%s)";
-    const TYPE_DOUBLE       = "float(%s)";
-    const TYPE_STRING       = "string(%s)";
-    const TYPE_RESOURCE     = "resource(%s) of type (%s)";
-    const TYPE_NULL         = "NULL";
-    const TYPE_UNKNOWN      = "UNKNOWN TYPE";
-    const TYPE_ARRAY        = "array(%s){%s}";
-    const TYPE_ARRAY_ITEM   = "[%s] => %s,";
-    const TYPE_OBJECT       = "object(%s)#%s (%s) {%s}";
-    const TYPE_PROPERTY     = "[\"%s\":%s] => %s";
-    
-    /**
-     * visibility tags
-     * @var string
-     */
-    const TYPE_CONSTANT     = 'const';
-    const TYPE_PUBLIC       = 'public';
-    const TYPE_PROTECTED    = 'protected';
-    const TYPE_PRIVATE      = 'private';
-    const TYPE_STATIC       = 'static';
+class Debug
+{
     
     /**
      * show constants bitwise
      * @var int
      */
-    const SHOW_OBJ_CONSTANTS    = 1;
-    
-    const SHOW_OBJ_PUBLIC       = 2;
-    
-    const SHOW_OBJ_PROTECTED    = 4;
-    
-    const SHOW_OBJ_PRIVATE      = 8;
+    const SHOW_CONSTANTS = 1;
     
     /**
-     * public methods and properties
+     * show public properties bitwise
      * @var int
      */
-    const SHOW_OBJ_ACCESSIBLE   = 3;
+    const SHOW_PUBLIC = 2;
     
     /**
-     * public methods and properties,
-     * constants, protected methods and protected
-     * @var unknown
+     * show protected properties bitwise
+     * @var int
      */
-    const SHOW_OBJ_VISABLE      = 7;
+    const SHOW_PROTECTED = 4;
+    
+    /**
+     * show private properties bitwise
+     * @var int
+     */
+    const SHOW_PRIVATE = 8;
+    
+    /**
+     * show constants and public properties
+     * @var int
+     */
+    const SHOW_ACCESSIBLE = 3;
+    
+    /**
+     * show constants and public/protected propertiesd
+     * @var int
+     */
+    const SHOW_VISABLE = 7;
+    
+    /**
+     * show constants and public/protected propertiesd
+     * @var int
+     */
+    const SHOW_ALL = 15;
+    
+    /**
+     * 
+     * @var string
+     */
+    protected static $NULL = 'null';
     
     /**
      *
-     * @var number
+     * @var string
      */
-    const SHOW_OBJ_ALL          = 15;
+    protected static $PUBLIC = 'public';
     
     /**
      *
-     * @var number
+     * @var string
      */
-    const DEFAULT_DEPTH         = 10;
+    protected static $PROTECTED = 'protected';
     
     /**
      *
-     * @var number
+     * @var string
      */
-    private static $maxDepth;
+    protected static $PRIVATE = 'private';
     
     /**
      *
-     * @var bool
+     * @var string
      */
-    private static $htmlOutput = true;
+    protected static $CONSTANT = 'constant';
     
     /**
-     * No Construction
+     * 
+     * @var string
      */
-    private function __construct()
+    protected static $STATIC = 'static';
+    
+    /**
+     *
+     * @var string
+     */
+    protected static $DEPTH_LIMIT = '~DEPTH_LIMIT~';
+    
+    /**
+     *
+     * @var string
+     */
+    protected static $CIRCULAR_REFRENCE = '~CIRCULAR_REFRENCE~';
+  
+    /**
+     * formatting templates
+     * @var array
+     */
+    protected $templates = [
+        'boolean'           => 'bool(%s)',
+        'integer'           => 'int(%s)',
+        'double'            => 'float(%s)',
+        'string'            => 'string(%s) "%s"',
+        'resource'          => 'resource(%s) of type (%s)',
+        'unknown'           => 'unknown(%s)',
+        'array'             => 'array(%s){%s}',
+        'array_item'        => '[%s] => %s,',
+        'object'            => 'object(%s)#%s (%s) {%s}',
+        'property'          => '["%s":%s] => %s',
+    ];
+    
+    /**
+     * output as html
+     * @var boolean
+     */
+    protected $htmlOutput;
+    
+    /**
+     * depth limit for nested data
+     * @var int
+     */
+    protected $depthLimit;
+
+    /**
+     * Bitwise flags currently set
+     * @var int
+     */
+    protected $flags;
+    
+    /**
+     *
+     * @param string $html
+     * @param int $depthLimit
+     * @param int $flags - one or more of the SHOW_* constants
+     */
+    public function __construct($htmlOutput = true, $depthLimit = 10, $flags = self::SHOW_ALL)
+    {
+        $this->setHtmlOutput($htmlOutput);
+        $this->setDepthLimit($depthLimit);
+        $this->setFlags($flags);
+    }
+    
+    //===================== Getters/Setters ===============
+    
+    /**
+     *
+     * @return boolean
+     */
+    public function getHtmlOutput()
+    {
+        return $this->htmlOutput;
+    }
+    
+    /**
+     *
+     * @param string $toHtml
+     */
+    public function setHtmlOutput($htmlOutput)
+    {
+        $this->htmlOutput = $htmlOutput;
+    }
+    
+    /**
+     *
+     * @return int
+     */
+    public function getDepthLimit()
+    {
+        return $this->depthLimit;
+    }
+    
+    /**
+     *
+     * @param number $depthLimit
+     */
+    public function setDepthLimit($depthLimit)
+    {
+        $this->depthLimit = $depthLimit;
+    }
+    
+    /**
+     *
+     * @return int
+     */
+    public function getFlags()
+    {
+        return $this->flags;
+    }
+    
+    /**
+     * Set bitwise Flag, one or more of the SHOW_* constants
+     *
+     * @param int $flags
+     */
+    public function setFlags($flags)
+    {
+        $this->flags = $flags;
+    }
+    
+    //===================== Main ===============
+    
+    public function dump($input, $offset = 1)
+    {
+    }
+    
+    public function export()
+    {
+    }
+    
+    public function start()
+    {
+    }
+    
+    public function end()
+    {
+    }
+    
+    public function kill()
     {
     }
     
     /**
-     * No Cloning!
-     */
-    private function __clone()
-    {
-    }
-    
-    /**
-     * set output as HTML for line endings ( br ) etc..
-     * @param bool $toHtml
-     */
-    public static function setHtmlOutput($toHtml = true)
-    {
-        self::$htmlOutput = $toHtml;
-    }
-    
-    /**
-     * echo a debug string
+     *
      * @param mixed $var
-     * @param number $depthLimit - max depth limit to output
-     * @param number $flags - one of the SHOW_* constants
-     * @param number $offset - offset the stack trace
+     * @param int $level - current depth level [interal use]
+     * @param array $objInstances - map of current object instance [internal]
      */
-    public static function dump($var = null, $depthLimit = self::DEFAULT_DEPTH, $flags = self::SHOW_OBJ_VISABLE, $offset = 0)
-    {
-        self::$maxDepth  = $depthLimit;
-        
-        $before = self::$htmlOutput ? '<pre>' : '';
-        $after =  self::$htmlOutput ? '</pre>' : '';
-        
-        $ln = self::indentLine();
-        
-        echo    $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
-        self::getTraceFirstAsString($offset) . $ln .
-        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
-        self::getDebug($var, $flags) . $ln .
-        str_pad("", 90, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
-    }
-    
-    /**
-     * return debug as a string
-     * @param mixed $var
-     * @param number $depthLimit - max depth limit to output
-     * @param number $flags - one of the SHOW_* constants
-     * @param number $offset - offset the stack trace
-     * @return string
-     */
-    public static function export($var = null, $depthLimit = self::DEFAULT_DEPTH, $flags = self::SHOW_OBJ_VISABLE, $offset = 0)
-    {
-        self::$maxDepth  = $depthLimit;
-        
-        $before = self::$htmlOutput ? '<pre>' : '';
-        $after =  self::$htmlOutput ? '</pre>' : '';
-        
-        $ln = self::indentLine();
-        
-        return    $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
-        self::getTraceFirstAsString($offset) . $ln .
-        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
-        self::getDebug($var, $flags) . $ln .
-        str_pad("", 90, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
-    }
-    
-    /**
-     * capture output for debugging purposes
-     */
-    public static function start()
-    {
-        ob_start();
-    }
-    
-    /**
-     * format and ouput captured debugging
-     * @param number $offset - offset the stack trace
-     */
-    public static function end($offset = 0)
-    {
-        $output = ob_get_clean();
-        
-        $before = self::$htmlOutput ? '<pre>' : '';
-        $after =  self::$htmlOutput ? '</pre>' : '';
-        
-        $ln = self::indentLine();
-        
-        echo    $before . str_pad("* ".__METHOD__." *", 90, "*", STR_PAD_BOTH) . $ln .
-        self::getTraceFirstAsString($offset) . $ln .
-        str_pad("", 90, ".", STR_PAD_BOTH) . $ln .
-        $output . $ln .
-        str_pad("", 90, "*", STR_PAD_BOTH) . $ln  . $ln . $after;
-    }
-    
-    /**
-     *
-     * @param mixed $var
-     * @param number $depthLimit - max depth limit to output
-     * @param number $flags - one of the SHOW_* constants
-     */
-    public static function kill($var = null, $depthLimit = self::DEFAULT_DEPTH, $flags = self::SHOW_OBJ_VISABLE)
-    {
-        self::$maxDepth  = $depthLimit;
-        
-        $before = self::$htmlOutput ? '<pre>' : '';
-        $after =  self::$htmlOutput ? '</pre>' : '';
-        
-        $ln = self::indentLine();
-        
-        echo    $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
-        self::getTraceFirstAsString(1) . $ln .
-        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
-        self::getDebug($var, $flags) . $ln .
-        str_pad("", 90, "=", STR_PAD_BOTH) . $ln . $ln . $after;
-        exit;
-    }
-    
-    /**
-     *
-     * @param string $var
-     * @param number $flags
-     * @param number $level
-     * @param array $objInstances
-     * @throws \Jet\Exception
-     * @return string
-     */
-    private static function getDebug($var = null, $flags = self::SHOW_OBJ_VISABLE, $level = 0, array $objInstances = array())
+    public function debugVar($var, $level = 0, array $objInstances = array())
     {
         $type = gettype($var);
-        $ln = self::indentLine();
+        $ln = $this->indentLine();
         
         switch ($type) {
             case 'boolean':
-                return sprintf(self::TYPE_BOOLEAN, $var ? 'true' : 'false');
+                $v = $var ? 'true' : 'false';
+                return $this->templateVar($type, $v);
             case 'integer':
-                return sprintf(self::TYPE_INTEGER, $var);
+                return $this->templateVar($type, $var);
             case 'double':
                 $float = (float)$var;
-                if (strlen($float) == 1) {
+                if (strlen($float) == 1 || (strlen($float) == 2 && $float < 0)) {
                     $float = number_format($var, 1);
                 }
-                return sprintf(self::TYPE_DOUBLE, $float);
+                return $this->templateVar($type, $float);
             case 'string':
                 $len = strlen($var);
-                if (self::$htmlOutput) {
+                if ($this->htmlOutput) {
                     $var = htmlspecialchars($var, ENT_QUOTES, 'UTF-8', false);
                 }
-                return sprintf(self::TYPE_STRING, $len).' "'.$var.'"';
+                $var = addslashes($var);
+                
+                return $this->templateVar($type,$len,$var);
             case 'resource':
             case 'resource (closed)':
-                return sprintf(self::TYPE_RESOURCE, intval($var), get_resource_type($var));
+                return sprintf($this->templates['resource'], intval($var), get_resource_type($var));
             case 'NULL':
-                return self::TYPE_NULL;
-            case 'unknown type':
-                return self::TYPE_UNKNOWN;
+                return self::$NULL;
             case 'array':
                 $output = '';
                 $len = count($var);
-                
+
                 if ($len > 0) {
                     ++$level;
-                    if ($level < self::$maxDepth) {
+                    if ($level < $this->depthLimit) {
                         foreach ($var as $k => $v) {
+                            //HTML escape keys
                             if (gettype($k) == 'string') {
-                                if (self::$htmlOutput) {
+                                if ($this->htmlOutput) {
                                     $k = htmlspecialchars($k, ENT_QUOTES, 'UTF-8', false);
                                 }
                                 $k = '"'.$k.'"';
                             }
-                            $_v = self::getDebug($v, $flags, $level, $objInstances); //recursive
-                            $output .=  $ln . self::indentLevel($level) . sprintf(self::TYPE_ARRAY_ITEM, $k, $_v);
+                            $_v = $this->debugVar($v, $level, $objInstances); //recursive
+                            $output .=  $ln . $this->indentLevel($level) . $this->templateVar('array_item', $k, $_v);
                         }
                     } else {
-                        $output .= $ln . self::indentLevel($level) . self::DEPTH_LIMIT;
+                        $output .= $ln . $this->indentLevel($level) . self::$DEPTH_LIMIT;
                     }
                     --$level;
-                    $output .= $ln . self::indentLevel($level);
+                    $output .= $ln . $this->indentLevel($level);
                 }
-                return sprintf(self::TYPE_ARRAY, $len, $output);
+                return $this->templateVar($len, $output);
             case 'object':
                 $output = '';
                 $class = get_class($var);
@@ -301,36 +312,36 @@ class Debug{
                     $objInstances[ $class ][] = $hash;
                     ++$level;
                     
-                    if ($level < self::$maxDepth) {
+                    if ($level < $this->depthLimit) {
                         $ReflectionObj = new \ReflectionObject($var);
-                        if (self::SHOW_OBJ_CONSTANTS & $flags) {
+                        if (self::SHOW_CONSTANTS & $flags) {
                             //CONSTANTS
                             foreach ($ReflectionObj->getConstants() as $k => $v) {
-                                $output .= $ln . self::indentLevel($level);
-                                $output .= sprintf(
-                                    self::TYPE_PROPERTY,
+                                $output .= $ln . $this->indentLevel($level);
+                                $output .= $this->templateVar(
+                                    'property',
                                     $k,
-                                    self::TYPE_CONSTANT,
-                                    self::getDebug($v, $flags, $level, $objInstances) //recursive
-                                    );
+                                    self::$CONSTANT,
+                                    $this->debugVar($v, $level, $objInstances) //recursive
+                                );
                                 $output .= ",";
                                 ++$prop_count;
                             }
                         }
                         
                         $Properties = $ReflectionObj->getProperties();
-                        
+
                         /* @var $Property \ReflectionProperty */
                         foreach ($Properties as $Property) {
                             //types
-                            if (self::SHOW_OBJ_PUBLIC & $flags && $Property->isPublic()) {
-                                $prop_type = self::TYPE_PUBLIC;
-                            } elseif (self::SHOW_OBJ_PROTECTED & $flags && $Property->isProtected()) {
+                            if ($this->hasFlag(self::SHOW_PUBLIC) && $Property->isPublic()) {
+                                $prop_type = self::$PUBLIC;
+                            } elseif ($this->hasFlag(self::SHOW_PROTECTED) && $Property->isProtected()) {
                                 $Property->setAccessible(true);
-                                $prop_type = self::TYPE_PROTECTED;
-                            } elseif (self::SHOW_OBJ_PRIVATE & $flags && $Property->isPrivate()) {
+                                $prop_type = self::$PROTECTED;
+                            } elseif ($this->hasFlag(self::SHOW_PRIVATE) && $Property->isPrivate()) {
                                 $Property->setAccessible(true);
-                                $prop_type = self::TYPE_PRIVATE;
+                                $prop_type = self::$PRIVATE;
                             } else {
                                 continue;
                             }
@@ -339,50 +350,71 @@ class Debug{
                             
                             //static
                             if ($Property->isStatic()) {
-                                $prop_type .= ' '.self::TYPE_STATIC;
+                                $prop_type .= ' '.self::$PRIVATE;
                             }
-                            
-                            
-                            $output .= $ln . self::indentLevel($level);
-                            $output .= sprintf(
-                                self::TYPE_PROPERTY,
-                                $k,
-                                $prop_type,
-                                self::getDebug($v, $flags, $level, $objInstances) //recurse
-                                );
+
+                            $output .= $ln . $this->indentLevel($level);
+                            $output .= $this->templateVar(
+                                    'property',
+                                    $k,
+                                    $prop_type,
+                                    $this->debugVar($v, $level, $objInstances) //recurse
+                            );
                             $output .= ",";
                             ++$prop_count;
                         }
                     } else {
-                        $output .= $ln . self::indentLevel($level) . self::DEPTH_LIMIT;
+                        $output .= $ln . $this->indentLevel($level) . self::$DEPTH_LIMIT;
                     }
                     --$level;
                     
                     if (!empty($output)) {
-                        $output .= $ln . self::indentLevel($level);
+                        $output .= $ln . $this->indentLevel($level);
                     }
                 } else {
-                    $output .= self::CIRCULAR_REFRENCE;
+                    $output .= self::$CIRCULAR_REFRENCE;
                 }
                 
-                return sprintf(
-                    self::TYPE_OBJECT,
+                return $this->templateVar(
+                    $type,
                     $class,
                     $index,
                     $prop_count,
                     $output
-                    );
-        }
+                );
+            case 'unknown type':
+            default:
+                return $this->templateVar($type, $var);
+        } //end switch
+    }
         
-        //throw new \Jet\Exception('', \Jet\Exception::NOT_YET_IMPLIMENTED);
+
+    //===================== Helpers ===============
+    /**
+     * 
+     * @param args $type
+     * @param mixed ...$args
+     */
+    public function templateVar($type, ...$args){
+        return sprintf($this->templates[$type], ...$args);
     }
     
     /**
+     * check if a flag is set
      *
+     * @param int $flag
      */
-    private static function indentLine()
+    public function hasFlag($flag)
     {
-        if (self::$htmlOutput) {
+        return $this->flags & $flag;
+    }
+    
+    /**
+     * add a new line
+     */
+    protected function indentLine()
+    {
+        if ($this->htmlOutput) {
             return "<br>";
         } else {
             return PHP_EOL;
@@ -390,12 +422,12 @@ class Debug{
     }
     
     /**
-     *
-     * @param number $level
+     * add a tab
+     * @param int $level
      */
-    private static function indentLevel($level)
+    protected function indentLevel($level)
     {
-        if (self::$htmlOutput) {
+        if ($this->htmlOutput) {
             return str_repeat("&nbsp;", $level * 5);
         } else {
             return str_repeat("\t", $level);
@@ -407,7 +439,7 @@ class Debug{
      * @param number $offset
      * @return array
      */
-    public static function trace($offset = 0)
+    public function trace($offset = 0)
     {
         $trace = debug_backtrace(false);
         
@@ -424,7 +456,7 @@ class Debug{
      * get a backtrace - formatted as a stacktrace
      * @param number $offset
      */
-    public static function backTrace($offset = 0)
+    public function backTrace($offset = 0)
     {
         $trace = self::trace($offset);
         
@@ -478,24 +510,26 @@ class Debug{
     }
     
     /**
-     *
-     * @param number $offset
-     * @return string
-     */
-    public static function getTraceFirstAsString($offset = 0)
-    {
-        $trace = self::getTraceFirst($offset);
-        return "Output from FILE[ {$trace['file']} ] on LINE[ {$trace['line']} ]";
-    }
-    
-    /**
+     * get the call's backtrace
      *
      * @param number $offset
      * @return array
      */
-    public static function getTraceFirst($offset = 0)
+    public function getTraceFirst($offset = 0)
     {
         $trace = self::trace($offset);
         return reset($trace);
-    }   
+    }
+    
+    /**
+     * get the Output call's backtrace
+     *
+     * @param number $offset
+     * @return string
+     */
+    public function getTraceFirstAsString($offset = 0)
+    {
+        $trace = self::getTraceFirst($offset);
+        return "Output from FILE[ {$trace['file']} ] on LINE[ {$trace['line']} ]";
+    }
 }
