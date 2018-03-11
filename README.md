@@ -12,17 +12,7 @@ This is a simple debug print class, it's main features are
  
  Class refrence
 ```php
-    /**
-     * @param string $html
-     * @param int $depthLimit
-     * @param int $flags - one or more of the SHOW_* constants
-     */
 	public function __construct($htmlOutput = true, $depthLimit = 10, $flags = self::SHOW_ALL);
-	
-	/**
-     * Switch betwen HTML and TEXT output formats
-     * @return boolean
-     */
 	public function getHtmlOutput();
 	public function setHtmlOutput($htmlOutput);
 	public function getDepthLimit();
