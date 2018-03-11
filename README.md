@@ -24,7 +24,7 @@ This is a simple debug print class, it's main features are
 	public function start($offset = 0);
 	public function end($offset = 0);
 	public function kill($input, $offset = 0);
-	public function debugVar($var, $level = 0, array $objInstances = array());
+	public function debugVar($input, $level = 0, array $objInstances = array());
 	public function templateVar($type, ...$args);
 	public function hasFlag($flag);
 	public function trace($offset = 0);
@@ -32,8 +32,8 @@ This is a simple debug print class, it's main features are
 	public function getTraceFirst($offset = 0);
 	public function getTraceFirstAsString($offset = 0);	
 ```
-  Property          |   Type   |   Required  | Description
-  ----------------- | -------- | ----------- | ------------------------------------------------------
+ Property          |   Type   |   Required  | Description
+ ----------------- | -------- | ----------- | ------------------------------------------------------
 
 
 The debuger can handle any type provided by PHP's `gettype()`.

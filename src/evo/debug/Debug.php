@@ -320,48 +320,48 @@ class Debug
     
     /**
      *
-     * @param mixed $var
+     * @param mixed $input
      * @param int $level - current depth level [interal use]
      * @param array $objInstances - map of current object instance [internal]
      */
-    public function debugVar($var, $level = 0, array $objInstances = array())
+    public function debugVar($input, $level = 0, array $objInstances = array())
     {
-        $type = gettype($var);
+        $type = gettype($input);
         $ln = $this->indentLine();
         
         switch ($type) {
             case 'boolean':
-                $v = $var ? 'true' : 'false';
+                $v = $input ? 'true' : 'false';
                 return $this->templateVar($type, $v);
             case 'integer':
-                return $this->templateVar($type, $var);
+                return $this->templateVar($type, $input);
             case 'double':
-                $float = (float)$var;
+                $float = (float)$input;
                 if (strlen($float) == 1 || (strlen($float) == 2 && $float < 0)) {
-                    $float = number_format($var, 1);
+                    $float = number_format($input, 1);
                 }
                 return $this->templateVar($type, $float);
             case 'string':
-                $len = strlen($var);
+                $len = strlen($input);
                 if ($this->htmlOutput) {
-                    $var = htmlspecialchars($var, ENT_NOQUOTES, 'UTF-8', false);
+                    $input = htmlspecialchars($input, ENT_NOQUOTES, 'UTF-8', false);
                 }
-                $var = addslashes($var);
+                $input = addslashes($input);
                 
-                return $this->templateVar($type, $len, $var);
+                return $this->templateVar($type, $len, $input);
             case 'resource':
             case 'resource (closed)':
-                return sprintf($this->templates['resource'], intval($var), get_resource_type($var));
+                return sprintf($this->templates['resource'], intval($input), get_resource_type($input));
             case 'NULL':
                 return self::$NULL;
             case 'array':
                 $output = '';
-                $len = count($var);
+                $len = count($input);
 
                 if ($len > 0) {
                     ++$level;
                     if ($level < $this->depthLimit) {
-                        foreach ($var as $k => $v) {
+                        foreach ($input as $k => $v) {
                             //HTML escape keys
                             if (gettype($k) == 'string') {
                                 if ($this->htmlOutput) {
@@ -381,8 +381,8 @@ class Debug
                 return $this->templateVar($type, $len, $output);
             case 'object':
                 $output = '';
-                $class = get_class($var);
-                $hash = spl_object_hash($var);
+                $class = get_class($input);
+                $hash = spl_object_hash($input);
                 $prop_count = 0;
                 
                 if (!isset($objInstances[ $class ])) {
@@ -395,7 +395,7 @@ class Debug
                     ++$level;
                     
                     if ($level < $this->depthLimit) {
-                        $ReflectionObj = new \ReflectionObject($var);
+                        $ReflectionObj = new \ReflectionObject($input);
                         if ($this->hasFlag(self::SHOW_CONSTANTS)) {
                             //CONSTANTS
                             foreach ($ReflectionObj->getConstants() as $k => $v) {
@@ -428,7 +428,7 @@ class Debug
                                 continue;
                             }
                             $k = $Property->getName();
-                            $v = $Property->getValue($var);
+                            $v = $Property->getValue($input);
                             
                             //static
                             if ($Property->isStatic()) {
@@ -466,7 +466,7 @@ class Debug
                 );
             case 'unknown type':
             default:
-                return $this->templateVar($type, $var);
+                return $this->templateVar($type, $input);
         } //end switch
     }
         
