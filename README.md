@@ -30,11 +30,33 @@ This is a simple debug print class, it's main features are
 	public function trace($offset = 0);
 	public function backTrace($offset = 0);
 	public function getTraceFirst($offset = 0);
-	public function getTraceFirstAsString($offset = 0);	
+	public function getTraceFirstAsString($offset = 0);
 ```
- Property          |   Type   |   Required  | Description
- ----------------- | -------- | ----------- | ------------------------------------------------------
+##Properties##
 
+ Name              |   Type   |   Required  | Description
+ ----------------- | -------- | ----------- | ------------------------------------------------------
+ $htmlOutput       |  boolean |      no     | Switch between HTML and Text output
+ $depthLimit       |  integer |      no     | Max nesting level to output
+ $flags            |  bitwise |      no     | Options - see Flags
+ $input            |  mixed   |      yes    | Input to process (variables to debug)
+ $offset           |  integer |      no     | Offeset for backtracing (used to print where debug was called from)
+ $level            |  integer |      no     | current depth level (internal use)
+ $objInstances     |  array   |      no     | tracking array for object instance (interal use)
+ 
+ 
+##Object Flags##
+ Name               | Description
+ ------------------ | -----------------------------------------------------------------------------
+ SHOW_CONSTANTS     | Include object constants in output
+ SHOW_PUBLIC        | Include public properties in output
+ SHOW_PROTECTED     | Include protected properties in output
+ SHOW_PRIVATE       | Include private properties in output
+ SHOW_ACCESSIBLE    | Include constants and public properties in output
+ SHOW_VISABLE       | Include constants and public properties and protected properties in output
+ SHOW_ALL           | Include all of the above in output
+ 
+ Flags are bitwise and can be set like this `SHOW_CONSTANTS | SHOW_PUBLIC` the same way PHP canstants for variouse things are handled.  The default is `SHOW_ALL`
 
 The debuger can handle any type provided by PHP's `gettype()`.
 
@@ -48,8 +70,37 @@ The debuger can handle any type provided by PHP's `gettype()`.
  - object
  - unkown type
  
+These are output in a format much like PHP's built in `var_dump` as I find that the most usefull format.
+ 
 It is circular refrence safe, unlike many of PHP's built in output function.  A simple example of a circular refrence is an object that stores a refrence to itself in one of it's properties.  Another example is an object that stores a refrence to a second object that stores a refrence to the first object.  In PHP's built in functions, this results in infinate recursion.  The Debugger instead replaces the circular refrence with a simple place holder `~CIRCULAR_REFRENCE~`.
 
 Simularaly it also has protection or limits on the depth it will look at when outputing.  This limit can be set in the constructor.  Once the depth limit is reached a place holder will be substitued `~DEPTH_LIMIT~`.
  
-
+Example:
+```php
+================================= evo\debug\Debug::dump ==================================
+Output from FILE[ {yourpath}\index.php ] on LINE[ 25 ]
+------------------------------------------------------------------------------------------
+object(DebugTestItem)#0 (10) {
+        ["CONSTANT":constant] => string(8) "constant",
+        ["PUB_STATIC":public private] => string(10) "pub_static",
+        ["PRO_STATIC":protected private] => string(10) "pro_static",
+        ["PRI_STATIC":private private] => string(10) "pri_static",
+        ["pub":public] => string(3) "pub",
+        ["pro":protected] => string(3) "pro",
+        ["pri":private] => string(3) "pri",
+        ["array":public] => array(3){
+                [0] => int(0),
+                ["one"] => int(1),
+                ["array"] => array(3){
+                        [0] => string(3) "two",
+                        [1] => string(5) "three",
+                        [2] => string(4) "four",
+                },
+        },
+        ["object":protected] => object(stdClass)#0 (0) {},
+        ["self":private] => object(DebugTestItem)#0 (0) {~CIRCULAR_REFRENCE~},
+}
+==========================================================================================
+```
+Please note that `{yourpath}` will be the actual path to the index file on your system.  This is exteemly useful if you are like me and forget where you put all your print function.
