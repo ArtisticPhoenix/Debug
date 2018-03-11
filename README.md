@@ -32,8 +32,8 @@ This is a simple debug print class, it's main features are
 	public function getTraceFirst($offset = 0);
 	public function getTraceFirstAsString($offset = 0);	
 ```
- 
- 
+  Property          |   Type   |   Required  | Description
+  ----------------- | -------- | ----------- | ------------------------------------------------------
 
 
 The debuger can handle any type provided by PHP's `gettype()`.
