@@ -10,7 +10,7 @@ This is a simple debug print class, it's main features are
  - Debug/output buffering
  - overall better formating
  
- Class refrence
+### Class refrence ###
 ```php
 	public function __construct($htmlOutput = true, $depthLimit = 10, $flags = self::SHOW_ALL);
 	public function getHtmlOutput();
@@ -32,7 +32,7 @@ This is a simple debug print class, it's main features are
 	public function getTraceFirst($offset = 0);
 	public function getTraceFirstAsString($offset = 0);
 ```
-##Properties##
+### Properties ###
 
  Name              |   Type   |   Required  | Description
  ----------------- | -------- | ----------- | ------------------------------------------------------
@@ -45,7 +45,7 @@ This is a simple debug print class, it's main features are
  $objInstances     |  array   |      no     | tracking array for object instance (interal use)
  
  
-##Object Flags##
+### Object Flags ###
 
  Name               | Description
  ------------------ | -----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ It is circular refrence safe, unlike many of PHP's built in output function.  A 
 
 Simularaly it also has protection or limits on the depth it will look at when outputing.  This limit can be set in the constructor.  Once the depth limit is reached a place holder will be substitued `~DEPTH_LIMIT~`.
  
-Example:
+### Example ###
 ```php
 ================================= evo\debug\Debug::dump ==================================
 Output from FILE[ {yourpath}\index.php ] on LINE[ 25 ]
