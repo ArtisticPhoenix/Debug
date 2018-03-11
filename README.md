@@ -27,8 +27,8 @@ This is a simple debug print class, it's main features are
 	public function debugVar($var, $level = 0, array $objInstances = array());
 	public function templateVar($type, ...$args);
 	public function hasFlag($flag);
-	public function trace($offset = 0)'
-	public function backTrace($offset = 0)'
+	public function trace($offset = 0);
+	public function backTrace($offset = 0);
 	public function getTraceFirst($offset = 0);
 	public function getTraceFirstAsString($offset = 0);	
 ```
