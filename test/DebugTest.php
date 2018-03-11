@@ -89,7 +89,7 @@ the box.
      */
     public function testNull()
     {
-        $this->assertEquals('null', $this->Debug->debugVar(null));   
+        $this->assertEquals('null', $this->Debug->debugVar(null));
     }
     
     /**
@@ -101,7 +101,7 @@ the box.
         $f = fopen("php://temp", "w");
         fclose($f);
         
-        $this->assertEquals('unknown(Resource id #'.intval($f).')', $this->Debug->debugVar($f));   
+        $this->assertEquals('unknown(Resource id #'.intval($f).')', $this->Debug->debugVar($f));
     }
     
     /**
@@ -126,29 +126,24 @@ the box.
         );
         
         
-       /* $array[] = false;
-        $array[] = 1;
-        $array[] = 1.0;
-        $array[] = 'string';
-        $f = fopen("php://temp", "w");
-        $array[] = $f;
-        $g = fopen("php://temp", "w");
-        fclose($g);
-        $array[] = $g;
-        $array[] = null;
-        
-        $this->assertEquals('array(0){}', $this->Debug->debugVar($array));
-        
-        fclose($f);*/
+        /* $array[] = false;
+         $array[] = 1;
+         $array[] = 1.0;
+         $array[] = 'string';
+         $f = fopen("php://temp", "w");
+         $array[] = $f;
+         $g = fopen("php://temp", "w");
+         fclose($g);
+         $array[] = $g;
+         $array[] = null;
+
+         $this->assertEquals('array(0){}', $this->Debug->debugVar($array));
+
+         fclose($f);*/
     }
-    
- 
-    
 }
 
-class fakeObject{
-    
+class fakeObject
+{
     const CONSTANT = 'constant';
-    
-    
 }

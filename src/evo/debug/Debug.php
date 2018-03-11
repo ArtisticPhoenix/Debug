@@ -62,7 +62,7 @@ class Debug
     const SHOW_ALL = 15;
     
     /**
-     * 
+     *
      * @var string
      */
     protected static $NULL = 'null';
@@ -92,7 +92,7 @@ class Debug
     protected static $CONSTANT = 'constant';
     
     /**
-     * 
+     *
      * @var string
      */
     protected static $STATIC = 'static';
@@ -266,7 +266,7 @@ class Debug
                 }
                 $var = addslashes($var);
                 
-                return $this->templateVar($type,$len,$var);
+                return $this->templateVar($type, $len, $var);
             case 'resource':
             case 'resource (closed)':
                 return sprintf($this->templates['resource'], intval($var), get_resource_type($var));
@@ -391,11 +391,12 @@ class Debug
 
     //===================== Helpers ===============
     /**
-     * 
+     *
      * @param args $type
      * @param mixed ...$args
      */
-    public function templateVar($type, ...$args){
+    public function templateVar($type, ...$args)
+    {
         return sprintf($this->templates[$type], ...$args);
     }
     
