@@ -46,6 +46,7 @@ This is a simple debug print class, it's main features are
  
  
 ##Object Flags##
+
  Name               | Description
  ------------------ | -----------------------------------------------------------------------------
  SHOW_CONSTANTS     | Include object constants in output
