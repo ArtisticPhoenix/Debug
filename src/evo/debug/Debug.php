@@ -1,7 +1,6 @@
 <?php
 namespace evo\debug;
 
-use phpDocumentor\Reflection\Types\Resource;
 
 /**
  *
