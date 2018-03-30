@@ -1,7 +1,6 @@
 <?php
 namespace evo\debug;
 
-
 /**
  *
  * (c) 2016 Hugh Durham III
