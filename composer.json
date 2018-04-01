@@ -20,7 +20,8 @@
 		"issues" : "https://github.com/ArtisticPhoenix/Debugger/issues"
 	},
 	"require" : {
-		"php" : ">=5.6"
+		"php" : ">=5.6",
+		"evo/patterns" : "dev-master"
 	},
 	"type" : "library",
 	"authors" : [{
