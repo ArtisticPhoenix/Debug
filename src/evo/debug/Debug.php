@@ -378,7 +378,7 @@ use evo\pattern\singleton\MultitonInterface;
                                 $output .=  $ln . $this->indentLevel($level) . $this->templateVar('array item', $k, $_v);
                             }
                         } else {
-                            $output .= $ln . $this->indentLevel($level) . DEPTH_LIMIT;
+                            $output .= $ln . $this->indentLevel($level) . self::$DEPTH_LIMIT;
                         }
                         --$level;
                         $output .= $ln . $this->indentLevel($level);
