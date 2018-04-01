@@ -161,6 +161,7 @@ class Debug implements MultitonInterface
         $load();
     }
 
+    
     //===================== Getters/Setters ===============
     /**
      *

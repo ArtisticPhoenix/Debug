@@ -9,7 +9,6 @@ use evo\debug\Debug;
  * (Debug::getInstance('functions)')->setFlags(Debug::SHOW_ALL);
  *
  */
-
 if (!function_exists('evo_debug_dump')) {
     /**
      *
