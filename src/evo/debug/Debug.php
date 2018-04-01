@@ -3,8 +3,8 @@ namespace evo\debug{
     
 use evo\pattern\singleton\MultitonTrait;
 use evo\pattern\singleton\MultitonInterface;
-                                
-    /**
+
+/**
      *
      * (c) 2016 Hugh Durham III
      *
@@ -150,7 +150,7 @@ use evo\pattern\singleton\MultitonInterface;
          */
         protected $buffered = '';
 
-        //===================== Getters/Setters ===============        
+        //===================== Getters/Setters ===============
         /**
          *
          * @return boolean
@@ -208,7 +208,7 @@ use evo\pattern\singleton\MultitonInterface;
         
         //===================== Main ===============
         /**
-         * 
+         *
          * Print out debug for input.
          *
          * @param mixed $input
@@ -229,7 +229,7 @@ use evo\pattern\singleton\MultitonInterface;
         }
         
         /**
-         * 
+         *
          * return debug fro an input
          *
          * @param mixed $input
@@ -264,10 +264,11 @@ use evo\pattern\singleton\MultitonInterface;
         
         /**
          * flush the debug buffer to output
-         * 
+         *
          * @param mixed $offset
          */
-        public function flush($offset = 0){
+        public function flush($offset = 0)
+        {
             echo $this->end($offset);
         }
         
@@ -631,104 +632,112 @@ use evo\pattern\singleton\MultitonInterface;
 
 namespace {
     use evo\debug\Debug;
-    
-    if(!function_exists('evo_debug_dump')){
+
+    if (!function_exists('evo_debug_dump')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::dump()
          */
-        function evo_debug_dump($input, $offset=0){
+        function evo_debug_dump($input, $offset=0)
+        {
             Debug::getInstance('global')->dump($input, $offset);
         }
     }
     
-    if(!function_exists('evo_debug_export')){
+    if (!function_exists('evo_debug_export')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::export()
          */
-        function evo_debug_export($input, $offset=0){
+        function evo_debug_export($input, $offset=0)
+        {
             return Debug::getInstance('global')->export($input, $offset);
         };
     }
     
-    if(!function_exists('evo_debug_start')){
+    if (!function_exists('evo_debug_start')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::start()
          */
-        function evo_debug_start($offset=0){
-            
+        function evo_debug_start($offset=0)
+        {
             Debug::getInstance('global')->start($offset);
         }
     }
     
-    if(!function_exists('evo_debug_flush')){
+    if (!function_exists('evo_debug_flush')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::flush()
          */
-        function evo_debug_flush($offset=0){
+        function evo_debug_flush($offset=0)
+        {
             Debug::getInstance('global')->flush($offset);
         }
     }
     
-    if(!function_exists('evo_debug_end')){
+    if (!function_exists('evo_debug_end')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::end()
          */
-        function evo_debug_end($offset=0){   
+        function evo_debug_end($offset=0)
+        {
             return Debug::getInstance('global')->end($offset);
         }
     }
     
-    if(!function_exists('evo_debug_kill')){
+    if (!function_exists('evo_debug_kill')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::kill()
          */
-        function evo_debug_kill($offset=0){          
+        function evo_debug_kill($offset=0)
+        {
             Debug::getInstance('global')->kill($offset);
         }
     }
     
-    if(!function_exists('evo_debug_vardump')){
+    if (!function_exists('evo_debug_vardump')) {
         /**
          * return debug for a value
-         * 
+         *
          * @param mixed $input
          * @see \evo\debug\Debug::vardump()
          */
-        function evo_debug_vardump($input){            
+        function evo_debug_vardump($input)
+        {
             return Debug::getInstance('global')->vardump($input);
         }
     }
     
-    if(!function_exists('evo_debug_trace')){
+    if (!function_exists('evo_debug_trace')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::trace()
          */
-        function evo_debug_trace($offset=0){
+        function evo_debug_trace($offset=0)
+        {
             return Debug::getInstance('global')->trace($offset);
         }
     }
     
-    if(!function_exists('evo_debug_backtrace')){
+    if (!function_exists('evo_debug_backtrace')) {
         /**
          *
          * {@inheritDoc}
          * @see \evo\debug\Debug::backtrace()
          */
-        function evo_debug_backtrace($offset=0){       
+        function evo_debug_backtrace($offset=0)
+        {
             Debug::getInstance('global')->backtrace($offset);
         }
     }
