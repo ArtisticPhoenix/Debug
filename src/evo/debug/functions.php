@@ -130,4 +130,3 @@ if (!function_exists('evo_debug_backtrace')) {
         Debug::getInstance('functions')->backtrace($offset);
     }
 }
-    

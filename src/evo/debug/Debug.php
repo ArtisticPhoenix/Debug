@@ -1,6 +1,6 @@
 <?php
 namespace evo\debug;
-    
+
 use evo\pattern\singleton\MultitonTrait;
 use evo\pattern\singleton\MultitonInterface;
 
@@ -153,9 +153,10 @@ class Debug implements MultitonInterface
     /**
      * Regester procedural functions, aka functional wrappers for the debug class.
      */
-    public function regesterFunctions(){
+    public function regesterFunctions()
+    {
         //scope resolution
-        $load = static function(){
+        $load = static function () {
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'functions.php';
         };
         $load();
@@ -651,4 +652,3 @@ class Debug implements MultitonInterface
         return "Output from FILE[ {$trace['file']} ] on LINE[ {$trace['line']} ]";
     }
 }
-
