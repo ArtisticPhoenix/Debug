@@ -153,7 +153,7 @@ class Debug implements MultitonInterface
     /**
      * Regester procedural functions, aka functional wrappers for the debug class.
      */
-    public function regesterFunctions()
+    public static function regesterFunctions()
     {
         //scope resolution
         $load = static function () {
