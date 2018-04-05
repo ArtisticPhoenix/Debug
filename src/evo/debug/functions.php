@@ -17,7 +17,7 @@ if (!function_exists('evo_debug_dump')) {
      */
     function evo_debug_dump($input, $offset=1)
     {
-        Debug::getInstance('functions')->dump($input, $offset);
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dump($input, $offset);
     }
 }
 
@@ -29,7 +29,7 @@ if (!function_exists('evo_debug_export')) {
      */
     function evo_debug_export($input, $offset=1)
     {
-        return Debug::getInstance('functions')->export($input, $offset);
+        return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->export($input, $offset);
     };
 }
 
@@ -41,7 +41,7 @@ if (!function_exists('evo_debug_start')) {
      */
     function evo_debug_start($offset=1)
     {
-        Debug::getInstance('functions')->start($offset);
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->start($offset);
     }
 }
 
@@ -53,7 +53,7 @@ if (!function_exists('evo_debug_flush')) {
      */
     function evo_debug_flush($offset=1)
     {
-        Debug::getInstance('functions')->flush($offset);
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->flush($offset);
     }
 }
 
@@ -65,7 +65,7 @@ if (!function_exists('evo_debug_end')) {
      */
     function evo_debug_end($offset=1)
     {
-        return Debug::getInstance('functions')->end($offset);
+        return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->end($offset);
     }
 }
 
@@ -77,7 +77,7 @@ if (!function_exists('evo_debug_kill')) {
      */
     function evo_debug_kill($input,$offset=1)
     {
-        Debug::getInstance('functions')->kill($input, $offset);
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->kill($input, $offset);
     }
 }
 
@@ -90,7 +90,7 @@ if (!function_exists('evo_debug_varexport')) {
      */
     function evo_debug_varexport($input)
     {
-        return Debug::getInstance('functions')->varExport($input);
+        return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->varExport($input);
     }
 }
 
@@ -103,7 +103,7 @@ if (!function_exists('evo_debug_vardump')) {
      */
     function evo_debug_vardump($input)
     {
-        return Debug::getInstance('functions')->varDump($input);
+        return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->varDump($input);
     }
 }
 
@@ -115,7 +115,7 @@ if (!function_exists('evo_debug_trace')) {
      */
     function evo_debug_trace($offset=1)
     {
-        return Debug::getInstance('functions')->trace($offset);
+        return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->trace($offset);
     }
 }
 
@@ -127,6 +127,6 @@ if (!function_exists('evo_debug_backtrace')) {
      */
     function evo_debug_backtrace($offset=1)
     {
-        Debug::getInstance('functions')->backtrace($offset);
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->backtrace($offset);
     }
 }

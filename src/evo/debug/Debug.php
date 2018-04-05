@@ -20,6 +20,15 @@ use evo\pattern\singleton\MultitonInterface;
 class Debug implements MultitonInterface
 {
     use MultitonTrait;
+    
+    /**
+     * The alias used when regestering functions
+     * 
+     * @var string
+     */
+    const ALIAS_FUNCTIONS = 'functions';
+    
+    
     /**
      * show constants bitwise
      * @var int
@@ -152,6 +161,13 @@ class Debug implements MultitonInterface
     
     /**
      * Regester procedural functions, aka functional wrappers for the debug class.
+     * 
+     * use the ALIAS_FUNCTIONS class constent to access this instance of Debug
+     * @example <pre>
+     * Change the output to HTML
+     * Debug::getInstance(Debug::ALIAS_FUNCTIONS)->setHtmlOutput(true);
+     * Set the Depth limit
+     * Debug::getInstance(Debug::ALIAS_FUNCTIONS)->setDepthLimit(5);
      */
     public static function regesterFunctions()
     {
