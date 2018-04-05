@@ -31,5 +31,5 @@
 			"role" : "Author"
 		}
 	],
-	"minimum-stability" : "beta"
+	"minimum-stability" : "dev"
 }
