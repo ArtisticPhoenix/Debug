@@ -507,7 +507,7 @@ class Debug implements MultitonInterface
      * @param mixed ...$args
      * @return string
      */
-    public function templateVar($type, ...$args)
+    protected function templateVar($type, ...$args)
     {
         return sprintf($this->templates[$type], ...$args);
     }
