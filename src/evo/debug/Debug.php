@@ -551,7 +551,7 @@ class Debug implements MultitonInterface
     }
     
     /**
-     * get the line this file was called on ( +1 )
+     * return the part of the backtrace where this function was called from
      * @param number $offset
      * @return array
      */

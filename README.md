@@ -11,31 +11,57 @@ This is a simple debug print class, it's main features are
  - overall better formating
  
 ### Class refrence ###
-```php
-	public function __construct($htmlOutput = true, $depthLimit = 10, $flags = self::SHOW_ALL);
-	public function getHtmlOutput();
-	public function setHtmlOutput($htmlOutput);
-	public function getDepthLimit();
-	public function setDepthLimit($depthLimit);
-	public function getFlags();
-	public function setFlags($flags);
-	public function dump($input, $offset = 0);
-	public function export($input, $offset = 0);
-	public function start($offset = 0);
-	public function end($offset = 0);
-	public function kill($input, $offset = 0);
-	public function debugVar($input, $level = 0, array $objInstances = array());
-	public function templateVar($type, ...$args);
-	public function hasFlag($flag);
-	public function trace($offset = 0);
-	public function backTrace($offset = 0);
-	public function getTraceFirst($offset = 0);
-	public function getTraceFirstAsString($offset = 0);
+```php   
+    //construct or get an instance of Debug
+    public static function getInstance($alias='');
+    //check if a given alias is instantiated
+    public static function isInstantiated($alias='')
+    //register the procedural function
+    public static function regesterFunctions();
+    //check if HTML mode is on
+    public function getHtmlOutput();
+    //change output to HTML mode
+    public function setHtmlOutput($htmlOutput);
+    //get the depth limit
+    public function getDepthLimit();
+    //set the depth limit (how deep to dig into nested arrays and objects)
+    public function setDepthLimit($depthLimit);
+    //get the flags that are set
+    public function getFlags();
+    //set flags
+    public function setFlags($flags);
+    //check if a flag is set
+    public function hasFlag($flag);
+    //Debug and output 
+    public function dump($input, $offset = 0);
+    //Debug and return 
+    public function export($input, $offset = 0);
+    //Start debugging output buffer, output will be capture until flush or end is called
+    public function start($offset = 0);
+    //End debugging output buffer, and return it
+    public function flush($offset = 0);
+    //End debugging output buffer, and output it
+    public function end($offset = 0);
+    //Kill PHP execution with a message and a 
+    public function kill($input, $offset = 0);
+    //debug without the outer formatting, output it
+    public function varDump($input);
+    //debug without the outer formatting, return it
+    public function varExport($input, $level = 0, array $objInstances = array());
+    //return the part of the backtrace where this function was called from
+    public function trace($offset = 0);
+    //print a backtrace - formatted like a stacktrace
+    public function backTrace($offset = 0);
+    //return a backTrace
+    public function getTraceFirst($offset = 0);
+    //return the formatted trace of getTraceFirst.
+    public function getTraceFirstAsString($offset = 0);
 ```
 ### Properties ###
 
  Name              |   Type   |   Required  | Description
  ----------------- | -------- | ----------- | ------------------------------------------------------
+ $alias            |  string  |      no     | name of a given instance of Debug
  $htmlOutput       |  boolean |      no     | Switch between HTML and Text output
  $depthLimit       |  integer |      no     | Max nesting level to output
  $flags            |  bitwise |      no     | Options - see Flags
@@ -57,7 +83,7 @@ This is a simple debug print class, it's main features are
  SHOW_VISABLE       | Include constants and public properties and protected properties in output
  SHOW_ALL           | Include all of the above in output
  
- Flags are bitwise and can be set like this `SHOW_CONSTANTS | SHOW_PUBLIC` the same way PHP canstants for variouse things are handled.  The default is `SHOW_ALL`
+Flags are bitwise and can be set like this `SHOW_CONSTANTS | SHOW_PUBLIC` the same way PHP canstants for variouse things are handled.  The default is `SHOW_ALL`
 
 The debuger can handle any type provided by PHP's `gettype()`.
 
@@ -105,3 +131,9 @@ object(DebugTestItem)#0 (10) {
 ==========================================================================================
 ```
 Please note that `{yourpath}` will be the actual path to the index file on your system.  This is exteemly useful if you are like me and forget where you put all your print function.
+
+Debug is a Multiton, or a collection wrapper for singletons.  This means you cannot construct this class manually.  To construct it call `$D = Debug::getInstance('alias')`.
+
+For ease of access you can use the procedural functions after calling `Debug::regesterFunctions()`. The procedural function area all named `evo_debug_{methodname}`.  So for example you can call `$Debug->dump()` with the function `evo_debug_dump()`.
+
+
