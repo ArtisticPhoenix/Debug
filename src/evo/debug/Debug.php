@@ -70,7 +70,7 @@ class Debug implements MultitonInterface
      * @var int
      */
     const SHOW_ALL = 15;
-
+  
     /**
      *
      * @var string
@@ -147,6 +147,12 @@ class Debug implements MultitonInterface
      * @var int
      */
     protected $depthLimit = 10;
+    
+    /**
+    *
+    * @var string
+    */
+    protected $messageWidth = 120;
 
     /**
      * Bitwise flags currently set
@@ -235,6 +241,23 @@ class Debug implements MultitonInterface
         $this->flags = $flags;
     }
     
+    /**
+     * Return the max with for messages in chars
+     * @return string
+     */
+    public function getMessageWidth(){
+        return $this->maxMessageWidth;
+    }
+    
+    /**
+     * only applies to the message wrapper
+     * 
+     * @param int $width
+     */
+    public function setMessageWidth($width){
+        $this->maxMessageWidth = $width;
+    }
+    
     //===================== Main ===============
     /**
      *
@@ -250,11 +273,11 @@ class Debug implements MultitonInterface
         
         $ln = $this->indentLine();
         
-        echo $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
+        echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
         $this->getTraceFirstAsString($offset) . $ln .
-        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
+        str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
         $this->varExport($input) . $ln .
-        str_pad("", 90, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
+        str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
     
     /**
@@ -272,11 +295,11 @@ class Debug implements MultitonInterface
         
         $ln = $this->indentLine();
         
-        return $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
+        return $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
         $this->getTraceFirstAsString($offset) . $ln .
-        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
+        str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
         $this->varExport($input) . $ln .
-        str_pad("", 90, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
+        str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
     
     /**
@@ -317,13 +340,13 @@ class Debug implements MultitonInterface
         
         $ln = $this->indentLine();
         
-        $buffer = $before . str_pad("* ".__CLASS__."::start *", 90, "*", STR_PAD_BOTH) . $ln .
+        $buffer = $before . str_pad("* ".__CLASS__."::start *", $this->messageWidth, "*", STR_PAD_BOTH) . $ln .
         $this->buffered . $ln .
-        str_pad("", 90, ".", STR_PAD_BOTH) . $ln .
+        str_pad("", $this->messageWidth, ".", STR_PAD_BOTH) . $ln .
         $output . $ln .
-        str_pad("", 90, ".", STR_PAD_BOTH) . $ln .
+        str_pad("", $this->messageWidth, ".", STR_PAD_BOTH) . $ln .
         $this->getTraceFirstAsString($offset) . $ln .
-        str_pad(" ".__METHOD__." ", 90, "*", STR_PAD_BOTH) . $ln  . $ln . $after;
+        str_pad(" ".__METHOD__." ", $this->messageWidth, "*", STR_PAD_BOTH) . $ln  . $ln . $after;
         
         $this->buffered = '';
         
@@ -343,11 +366,11 @@ class Debug implements MultitonInterface
         
         $ln = $this->indentLine();
         
-        echo $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln .
+        echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
         $this->getTraceFirstAsString($offset) . $ln .
-        str_pad("", 90, "-", STR_PAD_BOTH) . $ln .
+        str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
         $this->varExport($input) . $ln .
-        str_pad("", 90, "=", STR_PAD_BOTH) . $ln . $ln . $after;
+        str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln . $ln . $after;
         exit;
     }
     
@@ -601,9 +624,9 @@ class Debug implements MultitonInterface
         $after =  $this->htmlOutput ? '</pre>' : '';
         $ln = $this->indentLine();
         
-        $str_trace = $before . str_pad("= ".__METHOD__." =", 90, "=", STR_PAD_BOTH) . $ln;
+        $str_trace = $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln;
         $str_trace .= "Output from FILE[ {$first['file']} ] on LINE[ {$first['line']} ]" . $ln;
-        $str_trace .= str_pad("", 90, "-", STR_PAD_BOTH) . $ln;
+        $str_trace .= str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln;
 
         $k = -1;
         foreach ($trace as $k => $v) {
@@ -639,7 +662,7 @@ class Debug implements MultitonInterface
         
         $str_trace .= "#".($k+1)." {main}".$ln;
         
-        $str_trace .= str_pad("", 90, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
+        $str_trace .= str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
         
         echo $str_trace;
     }
