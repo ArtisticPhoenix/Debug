@@ -23,7 +23,7 @@ class Debug implements MultitonInterface
     
     /**
      * The alias used when regestering functions
-     * 
+     *
      * @var string
      */
     const ALIAS_FUNCTIONS = 'functions';
@@ -167,7 +167,7 @@ class Debug implements MultitonInterface
     
     /**
      * Regester procedural functions, aka functional wrappers for the debug class.
-     * 
+     *
      * use the ALIAS_FUNCTIONS class constent to access this instance of Debug
      * @example <pre>
      * Change the output to HTML
@@ -245,16 +245,18 @@ class Debug implements MultitonInterface
      * Return the max with for messages in chars
      * @return string
      */
-    public function getMessageWidth(){
+    public function getMessageWidth()
+    {
         return $this->maxMessageWidth;
     }
     
     /**
      * only applies to the message wrapper
-     * 
+     *
      * @param int $width
      */
-    public function setMessageWidth($width){
+    public function setMessageWidth($width)
+    {
         $this->maxMessageWidth = $width;
     }
     

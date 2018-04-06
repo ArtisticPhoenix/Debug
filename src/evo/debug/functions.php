@@ -75,7 +75,7 @@ if (!function_exists('evo_debug_kill')) {
      * {@inheritDoc}
      * @see \evo\debug\Debug::kill()
      */
-    function evo_debug_kill($input,$offset=1)
+    function evo_debug_kill($input, $offset=1)
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->kill($input, $offset);
     }
