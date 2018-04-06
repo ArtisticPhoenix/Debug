@@ -503,7 +503,7 @@ class Debug implements MultitonInterface
                             
                             //static
                             if ($Property->isStatic()) {
-                                $prop_type .= ' '.self::$PRIVATE;
+                                $prop_type .= ' '.self::$STATIC;
                             }
 
                             $output .= $ln . $this->indentLevel($level);
