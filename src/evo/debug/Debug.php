@@ -247,7 +247,7 @@ class Debug implements MultitonInterface
      */
     public function getMessageWidth()
     {
-        return $this->maxMessageWidth;
+        return $this->messageWidth;
     }
     
     /**
@@ -257,7 +257,7 @@ class Debug implements MultitonInterface
      */
     public function setMessageWidth($width)
     {
-        $this->maxMessageWidth = $width;
+        $this->messageWidth = $width;
     }
     
     //===================== Main ===============
