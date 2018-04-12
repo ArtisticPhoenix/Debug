@@ -137,3 +137,9 @@ Debug is a Multiton, or a collection wrapper for singletons.  This means you can
 For ease of access you can use the procedural functions after calling `Debug::regesterFunctions()`. The procedural function area all named `evo_debug_{methodname}`.  So for example you can call `$Debug->dump()` with the function `evo_debug_dump()`.
 
 
+### Release Notes ###
+
+  - 1.0.0 - init release
+  - 1.0.1 - added procedural functions
+  - 1.0.2 - shortened function names
+  
