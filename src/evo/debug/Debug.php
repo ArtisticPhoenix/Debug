@@ -152,7 +152,7 @@ class Debug implements MultitonInterface
     *
     * @var string
     */
-    protected $messageWidth = 120;
+    protected $messageWidth = 90;
 
     /**
      * Bitwise flags currently set
