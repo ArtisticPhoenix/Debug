@@ -134,14 +134,14 @@ Please note that `{yourpath}` will be the actual path to the index file on your 
 
 Debug is a Multiton, or a collection wrapper for singletons.  This means you cannot construct this class manually.  To construct it call `$D = Debug::getInstance('alias')`.
 
-For ease of access you can use the procedural functions after calling `Debug::regesterFunctions()`. The procedural function area all named `evo_debug_{methodname}`.  So for example you can call `$Debug->dump()` with the function `evo_debug_dump()`.
+For ease of access you can use the procedural functions after calling `Debug::regesterFunctions()`. The procedural function area all named `debug_{methodname}`.  So for example you can call `$Debug->dump()` with the function `debug_dump()`.
 
 
 ### Release Notes ###
 
   - 1.0.0 - init release
   - 1.0.1 - added procedural functions
-  - 1.0.2 - shortened function names
+  - 1.0.3 - shortened function names
   
   
   
