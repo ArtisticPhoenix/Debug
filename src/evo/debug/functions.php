@@ -15,7 +15,7 @@ if (!function_exists('debug_dump')) {
      * {@inheritDoc}
      * @see \evo\debug\Debug::dump()
      */
-    function dump($input, $offset=1)
+    function debug_dump($input, $offset=1)
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dump($input, $offset);
     }
