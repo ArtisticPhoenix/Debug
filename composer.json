@@ -30,6 +30,5 @@
 			"homepage" : "http://www.artisticphoenix.com",
 			"role" : "Author"
 		}
-	],
-	"minimum-stability" : "dev"
+	]
 }
