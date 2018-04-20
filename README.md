@@ -1,13 +1,14 @@
 # Debug for PHP V5.6+
 
-This is a simple debug print class, it's main features are  
+This is a full featured debug output/print class, it's main features are  
 
  - Ajustable visibillity, print public/protected/private properties, constants etc.
  - Ajustable depth limits, limit how deep the debugger looks in nested data
- - Circular refrence safe
+ - Circular refrence safe (eg. an object refrences itself)
  - Auto back tracing, prints the file an line where the debuging function was called
  - Debug/exit
  - Debug/output buffering
+ - Stack tracing
  - overall better formating
  
 ### Class refrence ###
@@ -139,7 +140,7 @@ For ease of access you can use the procedural functions after calling `Debug::re
 
 ### Instalation 
 
-The prefer way to instal is to include it in you composer.json file as this project depends on another one of my projects named "Pattern" https://github.com/ArtisticPhoenix/Pattern .  So if you just download it directly it wont have that dependancy unless you run the composer file included in the project.
+The prefer way to instal is to include it in you composer.json file as this project depends on another one of my projects named [Pattern](https://github.com/ArtisticPhoenix/Pattern).  So if you just download it directly it wont have that dependancy unless you run the composer file included in the project.
 
 ```
 {
