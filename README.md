@@ -137,6 +137,19 @@ Debug is a Multiton, or a collection wrapper for singletons.  This means you can
 For ease of access you can use the procedural functions after calling `Debug::regesterFunctions()`. The procedural function area all named `debug_{methodname}`.  So for example you can call `$Debug->dump()` with the function `debug_dump()`.  You can access the function instance by using the `Debug::ALIAS_FUNCTIONS` constant, such as `$instance = Debug::getInstance(Debug::ALIAS_FUNCTIONS)`.  One would do this, for example, to change the output from text to HTML or to change the visibillity flags.  Then the functions will use this instance and any custom settings you make to it.
 
 
+### Instalation 
+
+The prefer way to instal is to include it in you composer.json file as this project depends on another one of my projects named "Pattern".  So if you just download it directly it wont have that dependancy unless you run the composer file included in the project.
+
+```
+{
+   "require" : {
+		"evo/debug" : "~1.0"
+	}
+}
+```
+
+
 ### Release Notes ###
 
   - 1.0.0 - init release
