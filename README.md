@@ -139,7 +139,7 @@ For ease of access you can use the procedural functions after calling `Debug::re
 
 ### Instalation 
 
-The prefer way to instal is to include it in you composer.json file as this project depends on another one of my projects named "Pattern".  So if you just download it directly it wont have that dependancy unless you run the composer file included in the project.
+The prefer way to instal is to include it in you composer.json file as this project depends on another one of my projects named "Pattern" https://github.com/ArtisticPhoenix/Pattern .  So if you just download it directly it wont have that dependancy unless you run the composer file included in the project.
 
 ```
 {
