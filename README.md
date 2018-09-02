@@ -5,11 +5,12 @@ This is a full featured debug output/print class, it's main features are
  - Ajustable visibillity, print public/protected/private properties, constants etc.
  - Ajustable depth limits, limit how deep the debugger looks in nested data
  - Circular refrence safe (eg. an object refrences itself)
- - Auto back tracing, prints the file an line where the debuging function was called
+ - Auto back tracing, prints the file and line where the debuging function was called from
  - Debug/exit
  - Debug/output buffering
  - Stack tracing
- - overall better formating
+ - can be called from included functions
+ - overall better formating, simular to `var_dump` 
  
 ### Class refrence ###
 ```php   
@@ -67,7 +68,7 @@ This is a full featured debug output/print class, it's main features are
  $depthLimit       |  integer |      no     | Max nesting level to output
  $flags            |  bitwise |      no     | Options - see Flags
  $input            |  mixed   |      yes    | Input to process (variables to debug)
- $offset           |  integer |      no     | Offeset for backtracing (used to print where debug was called from)
+ $offset           |  integer |      no     | Manual Offeset for backtracing (backtrace where debug was called from). Backtracking should be done automatically, but it may fail in some "edge" cases. This allows you to manually set the offset (see function calls for example)
  $level            |  integer |      no     | current depth level (internal use)
  $objInstances     |  array   |      no     | tracking array for object instance (interal use)
  
@@ -136,6 +137,45 @@ Please note that `{yourpath}` will be the actual path to the index file on your 
 Debug is a Multiton, or a collection wrapper for singletons.  This means you cannot construct this class manually.  To construct it call `$D = Debug::getInstance('alias')`.
 
 For ease of access you can use the procedural functions after calling `Debug::regesterFunctions()`. The procedural function area all named `debug_{methodname}`.  So for example you can call `$Debug->dump()` with the function `debug_dump()`.  You can access the function instance by using the `Debug::ALIAS_FUNCTIONS` constant, such as `$instance = Debug::getInstance(Debug::ALIAS_FUNCTIONS)`.  One would do this, for example, to change the output from text to HTML or to change the visibillity flags.  Then the functions will use this instance and any custom settings you make to it.
+
+An example of Manual offset is in the debug functions
+
+**index.php**
+```php
+//require composer PSR4 autoloader
+require_once 'vendor/autoload.php';
+//regester the procedural functions for debug
+Debug::regesterFunctions();
+//example of modifing the depth limit for the instance used in the procedural functions
+Debug::getInstance(Debug::ALIAS_FUNCTIONS)->setDepthLimit(4);
+
+debug_dump("foo"); //we'll say this is line 8 of index.php
+```
+
+**src/functions.php**
+```php
+if (!function_exists('debug_dump')) {
+    /**
+     *
+     * {@inheritDoc}
+     * @see \evo\debug\Debug::dump()
+     */
+    function debug_dump($input, $offset=1)
+    {
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dump($input, $offset); //this is line 20 of functions.php
+    }
+}
+```
+
+**src/Debug.php**
+```php
+public function dump($input, $offset = 0)
+{
+  ...
+}
+```
+
+As you can see the `$offset=1` for `debug_dump()` has a default of **1**, this is set to **0** in the class itself. The reason for this (and for having a manual offset) is because we are wrapping the method call in a function. If we didn't modify the offset Debug would return the location it was called which is in the __src/functions.php__ file on like 20.  This is not what we want, we actualy want where the `debug_dump` functoin was called from, in this example line 8 from __index.php__.  There is no way to know this is the intention from inside the **Debug** class when it builds the back trace.  Because it's 1 call away from the actual class call, we set it as 1. Then Debug knows to shift the backtrace by that offset so that it displays the correct file and line number that we actually want.
 
 
 ### Instalation 
