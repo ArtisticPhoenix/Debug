@@ -570,11 +570,7 @@ class Debug implements MultitonInterface
      */
     protected function indentLine()
     {
-        if ($this->htmlOutput) {
-            return "<br>";
-        } else {
-            return PHP_EOL;
-        }
+        return PHP_EOL;
     }
     
     /**
@@ -584,11 +580,7 @@ class Debug implements MultitonInterface
      */
     protected function indentLevel($level)
     {
-        if ($this->htmlOutput) {
-            return str_repeat("&nbsp;", $level * 5);
-        } else {
-            return str_repeat("\t", $level);
-        }
+        return str_repeat("\t", $level);
     }
     
     /**

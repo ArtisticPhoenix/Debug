@@ -22,7 +22,7 @@ This is a full featured debug output/print class, it's main features are
     public static function regesterFunctions();
     //check if HTML mode is on
     public function getHtmlOutput();
-    //change output to HTML mode
+    //change output to HTML mode [default is false]
     public function setHtmlOutput($htmlOutput);
     //get the depth limit
     public function getDepthLimit();
@@ -99,7 +99,7 @@ The debuger can handle any type provided by PHP's `gettype()`.
  - object
  - unkown type
  
-These are output in a format much like PHP's built in `var_dump` as I find that the most usefull format.
+These are output in a format much like PHP's built in `var_dump` as I find that the most usefull format.  When in HTML output mode, debug is still returned as a string.  It has a set of `<pre>` tags added in to preserve whitespace and string variables are ran though `htmlspecialchars($input, ENT_NOQUOTES, 'UTF-8', false)` as to not inject the debug data as HTML into the page.
  
 It is circular refrence safe, unlike many of PHP's built in output function.  A simple example of a circular refrence is an object that stores a refrence to itself in one of it's properties.  Another example is an object that stores a refrence to a second object that stores a refrence to the first object.  In PHP's built in functions, this results in infinate recursion.  The Debugger instead replaces the circular refrence with a simple place holder `~CIRCULAR_REFRENCE~`.
 
