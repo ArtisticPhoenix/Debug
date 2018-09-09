@@ -21,7 +21,8 @@
 	},
 	"require" : {
 		"php" : ">=5.6",
-		"evo/patterns" : "~1.0"
+		"evo/patterns" : "~1.0",
+		"evo/evo" : "dev-master"
 	},
 	"type" : "library",
 	"authors" : [{
