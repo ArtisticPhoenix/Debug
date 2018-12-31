@@ -21,7 +21,7 @@ if (!function_exists('debug_dump')) {
     }
 }
 
-if (!function_exists('export')) {
+if (!function_exists('debug_export')) {
     /**
      *
      * {@inheritDoc}
