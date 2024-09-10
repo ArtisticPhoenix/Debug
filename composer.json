@@ -8,26 +8,23 @@
 	"autoload" : {
 		"psr-4" : {
 			"evo\\" : [
-				"src/evo",
-				"src/evo/debug"
+				"src/evo"
 			]
 		}
 	},
 	"support" : {
-		"email" : "artisticphoenix@gmail.com",
 		"wiki" : "https://github.com/ArtisticPhoenix/Debugger/wiki",
 		"source" : "https://github.com/ArtisticPhoenix/Debugger.git",
 		"issues" : "https://github.com/ArtisticPhoenix/Debugger/issues"
 	},
 	"require" : {
 		"php" : "<=8.3",
-		"evo/patterns" : "~1.0"
+		"evo/patterns" : "@stable"
 	},
 	"type" : "library",
 	"authors" : [{
 			"name" : "Hugh Durham III",
-			"email" : "artisticphoenix@gmail.com",
-			"homepage" : "http://www.artisticphoenix.com",
+			"homepage" : "https://github.com/ArtisticPhoenix",
 			"role" : "Author"
 		}
 	]
