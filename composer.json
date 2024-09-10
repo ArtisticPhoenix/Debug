@@ -18,7 +18,7 @@
 		"issues" : "https://github.com/ArtisticPhoenix/Debugger/issues"
 	},
 	"require" : {
-		"php" : "<=8.3",
+		"php" : ">=8.3",
 		"evo/patterns" : "@stable"
 	},
 	"type" : "library",
