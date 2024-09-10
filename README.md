@@ -15,11 +15,11 @@ This is a full featured debug output/print class, it's main features are
 ### Class refrence ###
 ```php   
     //construct or get an instance of Debug
-    public static function getInstance($alias='');
+    public static function getInstance(string $alias=''): self;
     //check if a given alias is instantiated
-    public static function isInstantiated($alias='')
+    public static function isInstantiated(string $alias=''): bool
     //register the procedural function
-    public static function regesterFunctions();
+    public static function regesterFunctions(): void;
     //check if HTML mode is on
     public function getHtmlOutput();
     //change output to HTML mode [default is false]

@@ -11,7 +11,7 @@ use evo\pattern\singleton\MultitonInterface;
  *
  * For license information please view the LICENSE file included with this source code.
  *
- * Debug class - circular refrence safe
+ * Debug class - circular reference safe
  *
  * @author HughDurham {ArtisticPhoenix}
  * @package Evo
@@ -23,114 +23,114 @@ class Debug implements MultitonInterface
     use MultitonTrait;
     
     /**
-     * The alias used when regestering functions
+     * The alias used when registering functions
      *
      * @var string
      */
-    const ALIAS_FUNCTIONS = 'functions';
+    const string ALIAS_FUNCTIONS = 'functions';
     
     
     /**
      * show constants bitwise
      * @var int
      */
-    const SHOW_CONSTANTS = 1;
+    const int SHOW_CONSTANTS = 1;
     
     /**
      * show public properties bitwise
      * @var int
      */
-    const SHOW_PUBLIC = 2;
+    const int SHOW_PUBLIC = 2;
     
     /**
      * show protected properties bitwise
      * @var int
      */
-    const SHOW_PROTECTED = 4;
+    const int SHOW_PROTECTED = 4;
     
     /**
      * show private properties bitwise
      * @var int
      */
-    const SHOW_PRIVATE = 8;
+    const int SHOW_PRIVATE = 8;
     
     /**
      * show constants and public properties
      * @var int
      */
-    const SHOW_ACCESSIBLE = 3;
+    const int SHOW_ACCESSIBLE = 3;
     
     /**
-     * show constants and public/protected propertiesd
+     * show constants and public/protected properties
      * @var int
      */
-    const SHOW_VISABLE = 7;
+    const int SHOW_VISABLE = 7;
     
     /**
-     * show constants and public/protected propertiesd
+     * show constants and public/protected properties
      * @var int
      */
-    const SHOW_ALL = 15;
+    const int SHOW_ALL = 15;
   
     /**
      *
      * @var string
      */
-    protected static $NULL = 'null';
+    protected static string $NULL = 'null';
     
     /**
      *
      * @var string
      */
-    protected static $PUBLIC = 'public';
+    protected static string $PUBLIC = 'public';
     
     /**
      *
      * @var string
      */
-    protected static $PROTECTED = 'protected';
+    protected static string $PROTECTED = 'protected';
     
     /**
      *
      * @var string
      */
-    protected static $PRIVATE = 'private';
+    protected static string $PRIVATE = 'private';
     
     /**
      *
      * @var string
      */
-    protected static $CONSTANT = 'constant';
+    protected static string $CONSTANT = 'constant';
     
     /**
      *
      * @var string
      */
-    protected static $STATIC = 'static';
+    protected static string $STATIC = 'static';
     
     /**
      *
      * @var string
      */
-    protected static $DEPTH_LIMIT = '~DEPTH_LIMIT~';
+    protected static string $DEPTH_LIMIT = '~DEPTH_LIMIT~';
     
     /**
      *
      * @var string
      */
-    protected static $CIRCULAR_REFRENCE = '~CIRCULAR_REFRENCE~';
+    protected static string $CIRCULAR_REFRENCE = '~CIRCULAR_REFRENCE~';
   
     /**
      * formatting templates
      * @var array
      */
-    protected $templates = [
+    protected array $templates = [
         'boolean'           => 'bool(%s)',
         'integer'           => 'int(%s)',
         'double'            => 'float(%s)',
         'string'            => 'string(%s) "%s"',
         'resource'          => 'resource(%s) of type (%s)',
-        'unknown type'           => 'unknown(%s)',
+        'unknown type'      => 'unknown(%s)',
         'array'             => 'array(%s){%s}',
         'array item'        => '[%s] => %s,',
         'object'            => 'object(%s)#%s (%s) {%s}',
@@ -141,42 +141,42 @@ class Debug implements MultitonInterface
      * output as html
      * @var boolean
      */
-    protected $htmlOutput = false;
+    protected bool $htmlOutput = false;
     
     /**
      * depth limit for nested data
      * @var int
      */
-    protected $depthLimit = 10;
+    protected int $depthLimit = 10;
     
     /**
-    *
-    * @var string
+    * line length of messages
+    * @var int
     */
-    protected $messageWidth = 90;
+    protected int $messageWidth = 78;
 
     /**
      * Bitwise flags currently set
      * @var int
      */
-    protected $flags = self::SHOW_ALL;
+    protected int $flags = self::SHOW_ALL;
     
     /**
-     * @var int
+     * @var string
      */
-    protected $buffered = '';
+    protected string $buffered = '';
     
     /**
      * Regester procedural functions, aka functional wrappers for the debug class.
      *
-     * use the ALIAS_FUNCTIONS class constent to access this instance of Debug
+     * use the ALIAS_FUNCTIONS class constant to access this instance of Debug
      * @example <pre>
      * Change the output to HTML
      * Debug::getInstance(Debug::ALIAS_FUNCTIONS)->setHtmlOutput(true);
      * Set the Depth limit
      * Debug::getInstance(Debug::ALIAS_FUNCTIONS)->setDepthLimit(5);
      */
-    public static function regesterFunctions()
+    public static function regesterFunctions(): void
     {
         //scope resolution
         $load = static function () {
@@ -189,18 +189,19 @@ class Debug implements MultitonInterface
     //===================== Getters/Setters ===============
     /**
      *
-     * @return boolean
+     * @return bool
      */
-    public function getHtmlOutput()
+    public function getHtmlOutput(): bool
     {
         return $this->htmlOutput;
     }
     
     /**
      *
-     * @param string $toHtml
+     * @param bool $htmlOutput
+     * @return void
      */
-    public function setHtmlOutput($htmlOutput)
+    public function setHtmlOutput(bool $htmlOutput): void
     {
         $this->htmlOutput = $htmlOutput;
     }
@@ -209,16 +210,17 @@ class Debug implements MultitonInterface
      *
      * @return int
      */
-    public function getDepthLimit()
+    public function getDepthLimit(): int
     {
         return $this->depthLimit;
     }
     
     /**
      *
-     * @param number $depthLimit
+     * @param int $depthLimit
+     * @return void
      */
-    public function setDepthLimit($depthLimit)
+    public function setDepthLimit(int $depthLimit): void
     {
         $this->depthLimit = $depthLimit;
     }
@@ -227,7 +229,7 @@ class Debug implements MultitonInterface
      *
      * @return int
      */
-    public function getFlags()
+    public function getFlags(): int
     {
         return $this->flags;
     }
@@ -236,17 +238,19 @@ class Debug implements MultitonInterface
      * Set bitwise Flag, one or more of the SHOW_* constants
      *
      * @param int $flags
+     * @return void
+     *
      */
-    public function setFlags($flags)
+    public function setFlags(int $flags): void
     {
         $this->flags = $flags;
     }
     
     /**
      * Return the max with for messages in chars
-     * @return string
+     * @return int
      */
-    public function getMessageWidth()
+    public function getMessageWidth() : int
     {
         return $this->messageWidth;
     }
@@ -255,8 +259,9 @@ class Debug implements MultitonInterface
      * only applies to the message wrapper
      *
      * @param int $width
+     * @return void
      */
-    public function setMessageWidth($width)
+    public function setMessageWidth(int $width): void
     {
         $this->messageWidth = $width;
     }
@@ -268,8 +273,10 @@ class Debug implements MultitonInterface
      *
      * @param mixed $input
      * @param int $offset
+     *
+     * @return void
      */
-    public function dump($input, $offset = 0)
+    public function dump(mixed $input=null, int $offset = 0): void
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
@@ -285,13 +292,13 @@ class Debug implements MultitonInterface
     
     /**
      *
-     * return debug fro an input
+     * return debug from an input
      *
      * @param mixed $input
      * @param int $offset
      * @return string
      */
-    public function export($input, $offset = 0)
+    public function export(mixed $input=null, int $offset = 0): string
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
@@ -308,10 +315,10 @@ class Debug implements MultitonInterface
     /**
      * Start debug output buffer
      *
-     * @param mixed $input
      * @param int $offset
+     * @return void
      */
-    public function start($offset = 0)
+    public function start(int $offset = 0): void
     {
         $this->buffered = $this->getTraceFirstAsString($offset);
         ob_start();
@@ -321,8 +328,9 @@ class Debug implements MultitonInterface
      * flush the debug buffer to output
      *
      * @param mixed $offset
+     * @return void
      */
-    public function flush($offset = 0)
+    public function flush(int $offset = 0): void
     {
         echo $this->end($offset);
     }
@@ -330,11 +338,10 @@ class Debug implements MultitonInterface
     /**
      * end and return debug buffer data
      *
-     * @param mixed $input
      * @param int $offset
      * @return string
      */
-    public function end($offset = 0)
+    public function end(int $offset = 0): string
     {
         $output = ob_get_clean();
         
@@ -362,7 +369,7 @@ class Debug implements MultitonInterface
      * @param mixed $input
      * @param int $offset
      */
-    public function kill($input, $offset = 0)
+    public function kill(mixed $input=null, $offset = 0) : never
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
@@ -383,7 +390,7 @@ class Debug implements MultitonInterface
      *
      * @param mixed $input
      */
-    public function varDump($input)
+    public function varDump(mixed $input): void
     {
         echo $this->varExport($input);
     }
@@ -396,7 +403,7 @@ class Debug implements MultitonInterface
      * @param array $objInstances - map of current object instance [internal]
      * @return string
      */
-    public function varExport($input, $level = 0, array $objInstances = array())
+    public function varExport(mixed $input, int $level = 0, array $objInstances = array()): string
     {
         $type = gettype($input);
         $ln = $this->indentLine();
@@ -491,10 +498,10 @@ class Debug implements MultitonInterface
                             if ($this->hasFlag(self::SHOW_PUBLIC) && $Property->isPublic()) {
                                 $prop_type = self::$PUBLIC;
                             } elseif ($this->hasFlag(self::SHOW_PROTECTED) && $Property->isProtected()) {
-                                $Property->setAccessible(true);
+                                //$Property->setAccessible(true);
                                 $prop_type = self::$PROTECTED;
                             } elseif ($this->hasFlag(self::SHOW_PRIVATE) && $Property->isPrivate()) {
-                                $Property->setAccessible(true);
+                                //$Property->setAccessible(true);
                                 $prop_type = self::$PRIVATE;
                             } else {
                                 continue;
@@ -549,7 +556,7 @@ class Debug implements MultitonInterface
      * @param mixed ...$args
      * @return string
      */
-    protected function templateVar($type, ...$args)
+    protected function templateVar(string $type, mixed ...$args): string
     {
         return sprintf($this->templates[$type], ...$args);
     }
@@ -560,7 +567,7 @@ class Debug implements MultitonInterface
      * @param int $flag
      * @return bool
      */
-    public function hasFlag($flag)
+    public function hasFlag(int $flag): bool
     {
         return $this->flags & $flag;
     }
@@ -569,7 +576,7 @@ class Debug implements MultitonInterface
      * add a new line
      * @return string
      */
-    protected function indentLine()
+    protected function indentLine(): string
     {
         return PHP_EOL;
     }
@@ -579,17 +586,17 @@ class Debug implements MultitonInterface
      * @param int $level
      * @return string
      */
-    protected function indentLevel($level)
+    protected function indentLevel(int $level): string
     {
         return str_repeat("\t", $level);
     }
     
     /**
      * return the part of the backtrace where this function was called from
-     * @param number $offset
+     * @param int $offset
      * @return array
      */
-    public function trace($offset = 0)
+    public function trace(int $offset = 0): array
     {
         $trace = debug_backtrace(false);
         foreach ($trace as $t) {
@@ -601,15 +608,14 @@ class Debug implements MultitonInterface
             
             ++$offset;
         }
-        $arr = array_slice($trace, ($offset - count($trace)));
-        return $arr;
+        return array_slice($trace, ($offset - count($trace)));
     }
     
     /**
      * print a backtrace - formatted as a stacktrace
      * @param int $offset
      */
-    public function backTrace($offset = 0)
+    public function backTrace(int $offset = 0): void
     {
         $trace = $this->trace($offset);
 
@@ -665,10 +671,10 @@ class Debug implements MultitonInterface
     /**
      * return the part of the stacktrace where the call was made from
      *
-     * @param number $offset
+     * @param int $offset
      * @return array
      */
-    public function getTraceFirst($offset = 0)
+    public function getTraceFirst(int $offset = 0): array
     {
         $trace = $this->trace($offset);
         return reset($trace);
@@ -677,10 +683,10 @@ class Debug implements MultitonInterface
     /**
      * return the formatted trace of the first line.
      *
-     * @param number $offset
+     * @param int $offset
      * @return string
      */
-    public function getTraceFirstAsString($offset = 0)
+    public function getTraceFirstAsString(int $offset = 0): string
     {
         $trace = $this->getTraceFirst($offset);
         return "Output from FILE[ {$trace['file']} ] on LINE[ {$trace['line']} ]";

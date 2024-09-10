@@ -11,11 +11,15 @@ use evo\debug\Debug;
  */
 if (!function_exists('debug_dump')) {
     /**
+     * Output debug information
      *
-     * {@inheritDoc}
+     * @param mixed|null $input
+     * @param int $offset
+     * @return void
+     *
      * @see \evo\debug\Debug::dump()
      */
-    function debug_dump($input, $offset=1)
+    function debug_dump(mixed $input=null, int $offset=1): void
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dump($input, $offset);
     }
@@ -23,11 +27,15 @@ if (!function_exists('debug_dump')) {
 
 if (!function_exists('debug_export')) {
     /**
+     * Return debug as a string
      *
-     * {@inheritDoc}
+     * @param mixed $input
+     * @param int $offset
+     * @return string
+     *
      * @see \evo\debug\Debug::export()
      */
-    function debug_export($input, $offset=1)
+    function debug_export(mixed $input=null, int $offset=1): string
     {
         return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->export($input, $offset);
     };
@@ -35,23 +43,26 @@ if (!function_exists('debug_export')) {
 
 if (!function_exists('debug_start')) {
     /**
+     * @param int $offset
+     * @return void
      *
-     * {@inheritDoc}
      * @see \evo\debug\Debug::start()
      */
-    function debug_start($offset=1)
+    function debug_start(int $offset=1): void
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->start($offset);
     }
 }
 
 if (!function_exists('debug_flush')) {
+
     /**
+     * @param int $offset
+     * @return void
      *
-     * {@inheritDoc}
      * @see \evo\debug\Debug::flush()
      */
-    function debug_flush($offset=1)
+    function debug_flush(int $offset=1): void
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->flush($offset);
     }
@@ -59,11 +70,12 @@ if (!function_exists('debug_flush')) {
 
 if (!function_exists('debug_end')) {
     /**
+     * @param int $offset
+     * @return string
      *
-     * {@inheritDoc}
      * @see \evo\debug\Debug::end()
      */
-    function debug_end($offset=1)
+    function debug_end(int $offset=1): string
     {
         return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->end($offset);
     }
@@ -71,49 +83,54 @@ if (!function_exists('debug_end')) {
 
 if (!function_exists('debug_kill')) {
     /**
+     * @param mixed|null $input
+     * @param int $offset
+     * @return void
      *
-     * {@inheritDoc}
      * @see \evo\debug\Debug::kill()
      */
-    function debug_kill($input, $offset=1)
+    function debug_kill(mixed $input=null, int $offset=1): void
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->kill($input, $offset);
     }
 }
 
-if (!function_exists('debug_varexport')) {
+if (!function_exists('debug_var_export')) {
     /**
-     * return debug for a value
+     * return debug as a string without outer formatting
      *
      * @param mixed $input
+     * @return string
+     *
      * @see \evo\debug\Debug::varExport()
      */
-    function debug_varexport($input)
+    function debug_var_export(mixed $input=null): string
     {
         return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->varExport($input);
     }
 }
 
-if (!function_exists('debug_vardump')) {
+if (!function_exists('debug_var_dump')) {
     /**
-     * return debug for a value
+     * output debug for a value without outer formatting
      *
      * @param mixed $input
      * @see \evo\debug\Debug::vardump()
      */
-    function debug_vardump($input)
+    function debug_var_dump(mixed $input=null): void
     {
-        return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->varDump($input);
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->varDump($input);
     }
 }
 
 if (!function_exists('debug_trace')) {
     /**
+     * @param int $offset
+     * @return array
      *
-     * {@inheritDoc}
      * @see \evo\debug\Debug::trace()
      */
-    function debug_trace($offset=1)
+    function debug_trace(int $offset=1): array
     {
         return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->trace($offset);
     }
@@ -121,11 +138,12 @@ if (!function_exists('debug_trace')) {
 
 if (!function_exists('debug_backtrace')) {
     /**
+     * @param int $offset
+     * @return void
      *
-     * {@inheritDoc}
      * @see \evo\debug\Debug::backtrace()
      */
-    function debug_backtrace($offset=1)
+    function debug_backtrace(int $offset=1)
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->backtrace($offset);
     }
