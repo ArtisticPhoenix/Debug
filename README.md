@@ -1,6 +1,6 @@
-# Debug for PHP V5.6+
+# Debug for PHP
 
-This is a full featured debug output/print class, it's main features are  
+This is a fully featured debug output/print class, it's main features are  
 
  - Ajustable visibillity, print public/protected/private properties, constants etc.
  - Ajustable depth limits, limit how deep the debugger looks in nested data
