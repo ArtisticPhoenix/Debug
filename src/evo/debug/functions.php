@@ -37,7 +37,7 @@ if (!function_exists('debug_dump_exception')) {
      */
     function debug_dump_exception(Throwable $exception, int $offset=1): void
     {
-        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dump($exception, $offset);
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dumpException($exception, $offset);
     }
 }
 
