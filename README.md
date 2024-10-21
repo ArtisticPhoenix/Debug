@@ -21,43 +21,45 @@ This is a full featured debug output/print class, it's main features are
     //register the procedural function
     public static function regesterFunctions(): void;
     //check if HTML mode is on
-    public function getHtmlOutput();
+    public function getHtmlOutput(): bool;
     //change output to HTML mode [default is false]
-    public function setHtmlOutput($htmlOutput);
+    public function setHtmlOutput(bool $htmlOutput): void;
     //get the depth limit
-    public function getDepthLimit();
+    public function getDepthLimit(): int;
     //set the depth limit (how deep to dig into nested arrays and objects)
-    public function setDepthLimit($depthLimit);
+    public function setDepthLimit(int $depthLimit);
     //get the flags that are set
-    public function getFlags();
+    public function getFlags(): int;
     //set flags
-    public function setFlags($flags);
+    public function setFlags(int $flags): void;
     //check if a flag is set
-    public function hasFlag($flag);
+    public function hasFlag(int $flag): bool;
     //Debug and output 
-    public function dump($input, $offset = 0);
+    public function dump(mixed $input=null, int $offset = 0);
+    //Debug and output 
+    public function dumpException(Throwable $exception, int $offset = 0);
     //Debug and return 
-    public function export($input, $offset = 0);
+    public function export(mixed $input=null, $offset = 0): string;
     //Start debugging output buffer, output will be capture until flush or end is called
-    public function start($offset = 0);
+    public function start(int $offset=0): void;
     //End debugging output buffer, and return it
-    public function flush($offset = 0);
+    public function flush(int $offset=0): void;
     //End debugging output buffer, and output it
-    public function end($offset = 0);
+    public function end(int $offset=0): string;
     //Kill PHP execution with a message and a 
-    public function kill($input, $offset = 0);
+    public function kill(mixed $input=null, $offset=0);
     //debug without the outer formatting, output it
-    public function varDump($input);
+    public function varDump(mixed $input);
     //debug without the outer formatting, return it
-    public function varExport($input, $level = 0, array $objInstances = array());
+    public function varExport(mixed $input, int $level=0, array $objInstances=array()): string;
     //return the part of the backtrace where this function was called from
-    public function trace($offset = 0);
+    public function trace(int $offset=0): array;
     //print a backtrace - formatted like a stacktrace
-    public function backTrace($offset = 0);
+    public function backTrace(int $offset=0): void;
     //return a backTrace
-    public function getTraceFirst($offset = 0);
+    public function getTraceFirst(int $offset=0): arrat;
     //return the formatted trace of getTraceFirst.
-    public function getTraceFirstAsString($offset = 0);
+    public function getTraceFirstAsString(int $offset=0): string;
 ```
 ### Properties ###
 

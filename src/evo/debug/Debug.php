@@ -284,10 +284,31 @@ class Debug implements MultitonInterface
         $ln = $this->indentLine();
         
         echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
-        $this->getTraceFirstAsString($offset) . $ln .
-        str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
-        $this->varExport($input) . $ln .
-        str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
+            $this->getTraceFirstAsString($offset) . $ln .
+            str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
+            $this->varExport($input) . $ln .
+            str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
+    }
+
+    /**
+     * Print out debug for an exception.
+     *
+     * @param \Throwable $exception
+     * @param int $offset
+     * @return void
+     */
+    public function dumpException(\Throwable $exception, int $offset = 0): void
+    {
+        $before = $this->htmlOutput ? '<pre>' : '';
+        $after = $this->htmlOutput ? '</pre>' : '';
+
+        $ln = $this->indentLine();
+        $message = get_class($exception)."::{$exception->getCode()} {$exception->getMessage()} IN {$exception->getFile()}:{$exception->getLine()}\n{$exception->getTraceAsString()}\n\n";
+
+        echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
+            $this->getTraceFirstAsString($offset) . $ln .
+            $message . $ln .
+            str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
     
     /**
@@ -306,10 +327,10 @@ class Debug implements MultitonInterface
         $ln = $this->indentLine();
         
         return $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
-        $this->getTraceFirstAsString($offset) . $ln .
-        str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
-        $this->varExport($input) . $ln .
-        str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
+            $this->getTraceFirstAsString($offset) . $ln .
+            str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
+            $this->varExport($input) . $ln .
+            str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
     
     /**
@@ -318,9 +339,9 @@ class Debug implements MultitonInterface
      * @param int $offset
      * @return void
      */
-    public function start(int $offset = 0): void
+    public function start(int $offset=0): void
     {
-        $this->buffered = $this->getTraceFirstAsString($offset);
+        $this->buffered=$this->getTraceFirstAsString($offset);
         ob_start();
     }
     
@@ -330,7 +351,7 @@ class Debug implements MultitonInterface
      * @param mixed $offset
      * @return void
      */
-    public function flush(int $offset = 0): void
+    public function flush(int $offset=0): void
     {
         echo $this->end($offset);
     }
@@ -341,7 +362,7 @@ class Debug implements MultitonInterface
      * @param int $offset
      * @return string
      */
-    public function end(int $offset = 0): string
+    public function end(int $offset=0): string
     {
         $output = ob_get_clean();
         
@@ -369,7 +390,7 @@ class Debug implements MultitonInterface
      * @param mixed $input
      * @param int $offset
      */
-    public function kill(mixed $input=null, $offset = 0) : never
+    public function kill(mixed $input=null, $offset=0) : never
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
@@ -377,10 +398,10 @@ class Debug implements MultitonInterface
         $ln = $this->indentLine();
         
         echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
-        $this->getTraceFirstAsString($offset) . $ln .
-        str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
-        $this->varExport($input) . $ln .
-        str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln . $ln . $after;
+            $this->getTraceFirstAsString($offset) . $ln .
+            str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
+            $this->varExport($input) . $ln .
+            str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln . $ln . $after;
         exit;
     }
     
@@ -403,7 +424,7 @@ class Debug implements MultitonInterface
      * @param array $objInstances - map of current object instance [internal]
      * @return string
      */
-    public function varExport(mixed $input, int $level = 0, array $objInstances = array()): string
+    public function varExport(mixed $input, int $level=0, array $objInstances=array()): string
     {
         $type = gettype($input);
         $ln = $this->indentLine();
@@ -596,7 +617,7 @@ class Debug implements MultitonInterface
      * @param int $offset
      * @return array
      */
-    public function trace(int $offset = 0): array
+    public function trace(int $offset=0): array
     {
         $trace = debug_backtrace(false);
         foreach ($trace as $t) {
@@ -615,7 +636,7 @@ class Debug implements MultitonInterface
      * print a backtrace - formatted as a stacktrace
      * @param int $offset
      */
-    public function backTrace(int $offset = 0): void
+    public function backTrace(int $offset=0): void
     {
         $trace = $this->trace($offset);
 
@@ -674,7 +695,7 @@ class Debug implements MultitonInterface
      * @param int $offset
      * @return array
      */
-    public function getTraceFirst(int $offset = 0): array
+    public function getTraceFirst(int $offset=0): array
     {
         $trace = $this->trace($offset);
         return reset($trace);
@@ -686,7 +707,7 @@ class Debug implements MultitonInterface
      * @param int $offset
      * @return string
      */
-    public function getTraceFirstAsString(int $offset = 0): string
+    public function getTraceFirstAsString(int $offset=0): string
     {
         $trace = $this->getTraceFirst($offset);
         return "Output from FILE[ {$trace['file']} ] on LINE[ {$trace['line']} ]";
