@@ -303,10 +303,11 @@ class Debug implements MultitonInterface
         $after = $this->htmlOutput ? '</pre>' : '';
 
         $ln = $this->indentLine();
-        $message = get_class($exception)."::{$exception->getCode()} {$exception->getMessage()} IN {$exception->getFile()}:{$exception->getLine()}\n{$exception->getTraceAsString()}\n\n";
+        $message = get_class($exception)."::{$exception->getCode()} {$exception->getMessage()} in {$exception->getFile()}:{$exception->getLine()}\n{$exception->getTraceAsString()}\n\n";
 
         echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
             $this->getTraceFirstAsString($offset) . $ln .
+            str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
             $message . $ln .
             str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
