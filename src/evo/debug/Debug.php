@@ -307,7 +307,7 @@ class Debug implements MultitonInterface
 
         echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
             $this->getTraceFirstAsString($offset) . $ln .
-            str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
+            str_pad("", $this->messageWidth, "- ", STR_PAD_BOTH) . $ln .
             $message . $ln .
             str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
