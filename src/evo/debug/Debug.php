@@ -3,6 +3,12 @@ namespace evo\debug;
 
 use evo\pattern\singleton\MultitonTrait;
 use evo\pattern\singleton\MultitonInterface;
+use ReflectionClassConstant;
+use ReflectionEnum;
+use ReflectionEnumBackedCase;
+use ReflectionException;
+use ReflectionObject;
+use Throwable;
 
 /**
  * test
@@ -64,7 +70,7 @@ class Debug implements MultitonInterface
      * show constants and public/protected properties
      * @var int
      */
-    const int SHOW_VISABLE = 7;
+    const int SHOW_VISIBLE = 7;
     
     /**
      * show constants and public/protected properties
@@ -101,6 +107,24 @@ class Debug implements MultitonInterface
      * @var string
      */
     protected static string $CONSTANT = 'constant';
+
+    /**
+     *
+     * @var string
+     */
+    protected static string $CASE = 'case';
+
+    /**
+     *
+     * @var string
+     */
+    protected static string $FINAL = 'final';
+
+    /**
+     *
+     * @var string
+     */
+    protected static string $READONLY = 'readonly';
     
     /**
      *
@@ -115,26 +139,35 @@ class Debug implements MultitonInterface
     protected static string $DEPTH_LIMIT = '~DEPTH_LIMIT~';
     
     /**
-     *
+     * REFERENCE
      * @var string
      */
-    protected static string $CIRCULAR_REFRENCE = '~CIRCULAR_REFRENCE~';
-  
+    protected static string $CIRCULAR_REFERENCE = '~CIRCULAR_REFERENCE~';
+
+    /**
+     * REFERENCE
+     * @var string
+     */
+    protected static string $UNINITIALIZED  = '~UNINITIALIZED~';
+
     /**
      * formatting templates
      * @var array
      */
     protected array $templates = [
-        'boolean'           => 'bool(%s)',
-        'integer'           => 'int(%s)',
-        'double'            => 'float(%s)',
-        'string'            => 'string(%s) "%s"',
-        'resource'          => 'resource(%s) of type (%s)',
-        'unknown type'      => 'unknown(%s)',
-        'array'             => 'array(%s){%s}',
-        'array item'        => '[%s] => %s,',
-        'object'            => 'object(%s)#%s (%s) {%s}',
-        'property'          => '["%s":%s] => %s',
+        'boolean'               => 'bool(%s)',
+        'integer'               => 'int(%s)',
+        'double'                => 'float(%s)',
+        'string'                => 'string(%s) "%s"',
+        'resource'              => 'resource(%s) of type (%s)',
+        'unknown type'          => 'unknown(%s)',
+        'array'                 => 'array(%s){%s}',
+        'array item'            => '[%s] => %s,',
+        'object'                => 'object(%s)#%s (%s) {%s}',
+        'property'              => '["%s":%s] => %s',
+        'enum'                  => 'enum(%s:%s)#%s (%s) {%s}',
+        'backed_case'           => '["%s":case] => %s',
+        'case'                  => '["%s":case]',
     ];
     
     /**
@@ -267,6 +300,7 @@ class Debug implements MultitonInterface
     }
     
     //===================== Main ===============
+
     /**
      *
      * Print out debug for input.
@@ -275,6 +309,7 @@ class Debug implements MultitonInterface
      * @param int $offset
      *
      * @return void
+     * @throws ReflectionException
      */
     public function dump(mixed $input=null, int $offset = 0): void
     {
@@ -293,11 +328,11 @@ class Debug implements MultitonInterface
     /**
      * Print out debug for an exception.
      *
-     * @param \Throwable $exception
+     * @param Throwable $exception
      * @param int $offset
      * @return void
      */
-    public function dumpException(\Throwable $exception, int $offset = 0): void
+    public function dumpException(Throwable $exception, int $offset = 0): void
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
@@ -311,7 +346,43 @@ class Debug implements MultitonInterface
             $message . $ln .
             str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
     }
-    
+
+    /**
+     *
+     * Processes and outputs the SQL query with substituted parameters for debugging purposes (only).
+     *
+     * @param string $statement The SQL query string containing placeholders.
+     * @param array $params An associative or indexed array of parameters to replace placeholders in the query.
+     * @param int $offset The offset value used for any specific tracing/debugging purposes.
+     * @return void
+     */
+    public function dumpSql(string $statement, array $params=[], int $offset = 0): void
+    {
+        //replace actual NULL values with a string 'NULL'
+        $params = array_map(fn($i)=>null===$i?'NULL':$i, $params);
+
+        if(str_contains($statement, '?')){
+            $statement = sprintf(str_replace('?', '%s', $statement), ...$params);
+        }else if(str_contains($statement, ':')){
+            //normalize the array keys
+            $placeholders = preg_filter('/^:?/', ':', array_keys($params));
+            $statement = str_replace($placeholders, $params, $statement);
+        }
+
+        $before = $this->htmlOutput ? '<pre>' : '';
+        $after = $this->htmlOutput ? '</pre>' : '';
+
+        $ln = $this->indentLine();
+
+        echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
+            $this->getTraceFirstAsString($offset) . $ln .
+            str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
+            $statement . $ln .
+            str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln  . $ln . $after;
+        
+    }
+
+
     /**
      *
      * return debug from an input
@@ -319,6 +390,7 @@ class Debug implements MultitonInterface
      * @param mixed $input
      * @param int $offset
      * @return string
+     * @throws ReflectionException
      */
     public function export(mixed $input=null, int $offset = 0): string
     {
@@ -384,14 +456,15 @@ class Debug implements MultitonInterface
         
         return $buffer;
     }
-    
+
     /**
-     * exit PHP and pring a debug message
+     * exit PHP and print a debug message
      *
      * @param mixed $input
      * @param int $offset
+     * @throws ReflectionException
      */
-    public function kill(mixed $input=null, $offset=0) : never
+    public function kill(mixed $input=null, int $offset=0) : never
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
@@ -405,25 +478,27 @@ class Debug implements MultitonInterface
             str_pad("", $this->messageWidth, "=", STR_PAD_BOTH) . $ln . $ln . $after;
         exit;
     }
-    
+
     /**
      *
      * output the dump for a variable (no outer formatting)
      *
      * @param mixed $input
+     * @throws ReflectionException
      */
     public function varDump(mixed $input): void
     {
         echo $this->varExport($input);
     }
-    
+
     /**
      * return the dump for a variable (no outer formatting)
      *
      * @param mixed $input
-     * @param int $level - current depth level [interal use]
+     * @param int $level - current depth level [internal use]
      * @param array $objInstances - map of current object instance [internal]
      * @return string
+     * @throws ReflectionException
      */
     public function varExport(mixed $input, int $level=0, array $objInstances=array()): string
     {
@@ -432,10 +507,8 @@ class Debug implements MultitonInterface
         
         switch ($type) {
             case 'boolean':
-                $v = $input ? 'true' : 'false';
-                return $this->templateVar($type, $v);
-            case 'integer':
-                return $this->templateVar($type, $input);
+                $ob_value = $input ? 'true' : 'false';
+                return $this->templateVar($type, $ob_value);
             case 'double':
                 $float = (float)$input;
                 if (strlen($float) == 1 || (strlen($float) == 2 && $float < 0)) {
@@ -462,16 +535,16 @@ class Debug implements MultitonInterface
                 if ($len > 0) {
                     ++$level;
                     if ($level < $this->depthLimit) {
-                        foreach ($input as $k => $v) {
+                        foreach ($input as $ob_name => $ob_value) {
                             //HTML escape keys
-                            if (gettype($k) == 'string') {
+                            if (gettype($ob_name) == 'string') {
                                 if ($this->htmlOutput) {
-                                    $k = htmlspecialchars($k, ENT_NOQUOTES, 'UTF-8', false);
+                                    $ob_name = htmlspecialchars($ob_name, ENT_NOQUOTES, 'UTF-8', false);
                                 }
-                                $k = '"'.$k.'"';
+                                $ob_name = '"'.$ob_name.'"';
                             }
-                            $_v = $this->varExport($v, $level, $objInstances); //recursive
-                            $output .=  $ln . $this->indentLevel($level) . $this->templateVar('array item', $k, $_v);
+                            $_v = $this->varExport($ob_value, $level, $objInstances); //recursive
+                            $output .=  $ln . $this->indentLevel($level) . $this->templateVar('array item', $ob_name, $_v);
                         }
                     } else {
                         $output .= $ln . $this->indentLevel($level) . self::$DEPTH_LIMIT;
@@ -481,90 +554,176 @@ class Debug implements MultitonInterface
                 }
                 return $this->templateVar($type, $len, $output);
             case 'object':
+                $final = '';
                 $output = '';
-                $class = get_class($input);
-                $hash = spl_object_hash($input);
-                $prop_count = 0;
-                
-                if (!isset($objInstances[ $class ])) {
-                    $objInstances[ $class ] = array();
+                $ob_class = get_class($input);
+                $ob_hash = spl_object_hash($input);
+
+                if (!isset($objInstances[$ob_class])) {
+                    //register the object to our circular reference cache
+                    $objInstances[$ob_class] = array();
                 }
-                
-                if (false === ($index = array_search($hash, $objInstances[ $class ]))) {
-                    $index = count($objInstances[ $class ]);
-                    $objInstances[ $class ][] = $hash;
+
+                if (!in_array($ob_hash, $objInstances[$ob_class])) {
+                    $ob_index = count($objInstances[$ob_class]); //fake the index for objects not already cached
+                    $objInstances[$ob_class][] = $ob_hash;
                     ++$level;
-                    
+
                     if ($level < $this->depthLimit) {
-                        $ReflectionObj = new \ReflectionObject($input);
-                        if ($this->hasFlag(self::SHOW_CONSTANTS)) {
-                            //CONSTANTS
-                            foreach ($ReflectionObj->getConstants() as $k => $v) {
+                        if($input instanceof \UnitEnum) {
+                            //Enumerators
+                            $type = 'enum';
+                            $name = $input->name;
+
+                            $ReflectionEnum = new ReflectionEnum($input);
+
+                            if ($this->hasFlag(self::SHOW_CONSTANTS)) {
+                                //CONSTANTS ["%s":%s] => %s
+                                foreach ($ReflectionEnum->getConstants() as $const_name => $const_value) {
+                                    if(is_object($const_value)){
+                                        $ReflectionConst = new ReflectionClassConstant(get_class($const_value), $const_name);
+                                        if($ReflectionConst->isEnumCase())
+                                            continue;
+                                    }
+
+                                    $output .= $ln . $this->indentLevel($level);
+                                    $output .= $this->templateVar(
+                                        'property',
+                                        $const_name,
+                                        self::$CONSTANT,
+                                        $this->varExport($const_value, $level, $objInstances) //recursive
+                                    );
+                                    $output .= ",";
+                                }
+                            }
+
+                            $case_count = 0;
+                            $Cases = $ReflectionEnum->getCases();
+                            foreach ($Cases as $Case) {
+                                //["%s"] => %s | ["%s"]
+                                $case_name = $Case->name;
+                                $output .= $ln . $this->indentLevel($level);
+                                if($Case instanceof ReflectionEnumBackedCase){
+                                    $output .= $this->templateVar(
+                                        'backed_case',
+                                        $case_name,
+                                        $this->varExport($Case->getValue()->value)
+                                    );
+                                }else{
+                                    $output .= $this->templateVar('case', $case_name);
+                                }
+                                $output .= ",";
+                                ++$case_count;
+                            }//end foreach
+
+                             //enum(%s:%s)#%s (%s) {%s}
+                             $args = [
+                                 $ob_class,
+                                 $name,
+                                 $ob_index,
+                                 $case_count
+                             ];
+                        }else {
+                            //typical objects
+                            $ReflectionObj = new ReflectionObject($input);
+
+                            $final = $ReflectionObj->isFinal() ? 'final ' : '';
+                            if ($this->hasFlag(self::SHOW_CONSTANTS)) {
+                                //CONSTANTS
+                                foreach ($ReflectionObj->getConstants() as $const_name => $const_value) {
+                                    //["%s":%s] => %s
+                                    $output .= $ln . $this->indentLevel($level);
+                                    $output .= $this->templateVar(
+                                        'property',
+                                        $const_name,
+                                        self::$CONSTANT,
+                                        $this->varExport($const_value, $level, $objInstances) //recursive
+                                    );
+                                    $output .= ",";
+                                }
+                            }
+
+                            $prop_count = 0;
+                            $Properties = $ReflectionObj->getProperties();
+
+                            foreach ($Properties as $Property) {
+                                //["%s":%s] => %s
+                                $prop_type = [];
+
+                                if ($this->hasFlag(self::SHOW_PUBLIC) && $Property->isPublic()) {
+                                    $prop_type[] = self::$PUBLIC;
+                                } elseif ($this->hasFlag(self::SHOW_PROTECTED) && $Property->isProtected()) {
+                                    //$Property->setAccessible(true);
+                                    $prop_type[] = self::$PROTECTED;
+                                } elseif ($this->hasFlag(self::SHOW_PRIVATE) && $Property->isPrivate()) {
+                                    //$Property->setAccessible(true);
+                                    $prop_type[] = self::$PRIVATE;
+                                } else {
+                                    continue;
+                                }
+
+                                //static
+                                if ($Property->isStatic()) {
+                                    $prop_type[] = self::$STATIC;
+                                }
+
+                                $ob_name = $Property->getName();
+                                //read only
+                                if($Property->isReadOnly() && !$Property->isInitialized($input)){
+                                    $ob_value = self::$UNINITIALIZED;
+                                }else{
+                                    $ob_value = $Property->getValue($input);
+                                }
+
+                                if($Property->isReadOnly()){
+                                    $prop_type[] = self::$READONLY;
+                                }
+
                                 $output .= $ln . $this->indentLevel($level);
                                 $output .= $this->templateVar(
                                     'property',
-                                    $k,
-                                    self::$CONSTANT,
-                                    $this->varExport($v, $level, $objInstances) //recursive
+                                    $ob_name,
+                                    implode(' ',$prop_type),
+                                    $this->varExport($ob_value, $level, $objInstances) //recurse
                                 );
                                 $output .= ",";
                                 ++$prop_count;
-                            }
-                        }
-                        
-                        $Properties = $ReflectionObj->getProperties();
+                            }//end foreach
 
-                        /* @var $Property \ReflectionProperty */
-                        foreach ($Properties as $Property) {
-                            //types
-                            if ($this->hasFlag(self::SHOW_PUBLIC) && $Property->isPublic()) {
-                                $prop_type = self::$PUBLIC;
-                            } elseif ($this->hasFlag(self::SHOW_PROTECTED) && $Property->isProtected()) {
-                                //$Property->setAccessible(true);
-                                $prop_type = self::$PROTECTED;
-                            } elseif ($this->hasFlag(self::SHOW_PRIVATE) && $Property->isPrivate()) {
-                                //$Property->setAccessible(true);
-                                $prop_type = self::$PRIVATE;
-                            } else {
-                                continue;
-                            }
-                            $k = $Property->getName();
-                            $v = $Property->getValue($input);
-                            
-                            //static
-                            if ($Property->isStatic()) {
-                                $prop_type .= ' '.self::$STATIC;
-                            }
-
-                            $output .= $ln . $this->indentLevel($level);
-                            $output .= $this->templateVar(
-                                    'property',
-                                    $k,
-                                    $prop_type,
-                                    $this->varExport($v, $level, $objInstances) //recurse
-                            );
-                            $output .= ",";
-                            ++$prop_count;
-                        }
+                            //object(%s)#%s (%s) {%s}
+                            $args = [
+                                $ob_class,
+                                $ob_index,
+                                $prop_count
+                            ];
+                        } //end if ENUM
                     } else {
+                        //if depth limit is reached
+                        $args = [
+                            $ob_class,
+                            false,
+                            0
+                        ];
+                        //object(%s)#%s (%s) {%s}
                         $output .= $ln . $this->indentLevel($level) . self::$DEPTH_LIMIT;
-                    }
+                    } //end if depth limit
+
                     --$level;
-                    
                     if (!empty($output)) {
-                        $output .= $ln . $this->indentLevel($level);
+                        $output = rtrim($output, ',' ) . $ln . $this->indentLevel($level);
                     }
                 } else {
-                    $output .= self::$CIRCULAR_REFRENCE;
+                    //CIRCULAR_REFERENCE
+                    $args = [
+                        $ob_class,
+                        false,
+                        0
+                    ];
+                    $output .= self::$CIRCULAR_REFERENCE;
                 }
-                
-                return $this->templateVar(
-                    $type,
-                    $class,
-                    $index,
-                    $prop_count,
-                    $output
-                );
+                $args[] = $output;
+                return $final . $this->templateVar($type, ...$args);
+            case 'integer':
             case 'unknown type':
             default:
                 return $this->templateVar($type, $input);
@@ -622,8 +781,6 @@ class Debug implements MultitonInterface
     {
         $trace = debug_backtrace(false);
         foreach ($trace as $t) {
-            // print_r($t);
-            // print_r($offset);
             if ($t['file'] != __FILE__) {
                 break;
             }
@@ -653,8 +810,8 @@ class Debug implements MultitonInterface
 
         $k = -1;
         foreach ($trace as $k => $v) {
-            $str_trace .= "#{$k} ";
-            $str_trace .= isset($v['file']) ? $v['file'] : '';
+            $str_trace .= "#$k ";
+            $str_trace .= $v['file'] ?? '';
             $str_trace .= isset($v['line']) ? '('.$v['line'].'): ' : '';
             
             $str_trace .= isset($v['class']) ? $v['class'].$v['type'] : '';
@@ -667,7 +824,6 @@ class Debug implements MultitonInterface
             $args = array();
             if (isset($v['args'])) {
                 foreach ($v['args'] as $w) {
-                    $o = '';
                     if (is_object($w)) {
                         $o = 'Object('.get_class($w).')';
                     } elseif (is_array($w)) {

@@ -17,7 +17,8 @@ if (!function_exists('debug_dump')) {
      * @param int $offset
      * @return void
      *
-     * @see \evo\debug\Debug::dump()
+     * @throws ReflectionException
+     * @see Debug::dump
      */
     function debug_dump(mixed $input=null, int $offset=1): void
     {
@@ -33,11 +34,23 @@ if (!function_exists('debug_dump_exception')) {
      * @param int $offset
      * @return void
      *
-     * @see \evo\debug\Debug::dump()
+     * @see Debug::dumpException
      */
     function debug_dump_exception(Throwable $exception, int $offset=1): void
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dumpException($exception, $offset);
+    }
+}
+
+if (!function_exists('debug_dump_sql')) {
+    /**
+     * For debugging sql
+     *
+     * @see Debug::dumpSql
+     */
+    function debug_dump_sql(string $statement, array $params = [], int $offset=1): void
+    {
+        Debug::getInstance(Debug::ALIAS_FUNCTIONS)->dumpSql($statement, $params, $offset);
     }
 }
 
@@ -49,12 +62,13 @@ if (!function_exists('debug_export')) {
      * @param int $offset
      * @return string
      *
-     * @see \evo\debug\Debug::export()
+     * @throws ReflectionException
+     * @see Debug::export
      */
     function debug_export(mixed $input=null, int $offset=1): string
     {
         return Debug::getInstance(Debug::ALIAS_FUNCTIONS)->export($input, $offset);
-    };
+    }
 }
 
 if (!function_exists('debug_start')) {
@@ -62,7 +76,7 @@ if (!function_exists('debug_start')) {
      * @param int $offset
      * @return void
      *
-     * @see \evo\debug\Debug::start()
+     * @see Debug::start
      */
     function debug_start(int $offset=1): void
     {
@@ -76,7 +90,7 @@ if (!function_exists('debug_flush')) {
      * @param int $offset
      * @return void
      *
-     * @see \evo\debug\Debug::flush()
+     * @see Debug::flush
      */
     function debug_flush(int $offset=1): void
     {
@@ -89,7 +103,7 @@ if (!function_exists('debug_end')) {
      * @param int $offset
      * @return string
      *
-     * @see \evo\debug\Debug::end()
+     * @see Debug::end
      */
     function debug_end(int $offset=1): string
     {
@@ -103,7 +117,8 @@ if (!function_exists('debug_kill')) {
      * @param int $offset
      * @return void
      *
-     * @see \evo\debug\Debug::kill()
+     * @throws ReflectionException
+     * @see Debug::kill
      */
     function debug_kill(mixed $input=null, int $offset=1): void
     {
@@ -118,7 +133,8 @@ if (!function_exists('debug_var_export')) {
      * @param mixed $input
      * @return string
      *
-     * @see \evo\debug\Debug::varExport()
+     * @throws ReflectionException
+     * @see Debug::varExport
      */
     function debug_var_export(mixed $input=null): string
     {
@@ -131,7 +147,8 @@ if (!function_exists('debug_var_dump')) {
      * output debug for a value without outer formatting
      *
      * @param mixed $input
-     * @see \evo\debug\Debug::vardump()
+     * @throws ReflectionException
+     * @see Debug::vardump
      */
     function debug_var_dump(mixed $input=null): void
     {
@@ -144,7 +161,7 @@ if (!function_exists('debug_trace')) {
      * @param int $offset
      * @return array
      *
-     * @see \evo\debug\Debug::trace()
+     * @see Debug::trace
      */
     function debug_trace(int $offset=1): array
     {
@@ -157,9 +174,9 @@ if (!function_exists('debug_backtrace')) {
      * @param int $offset
      * @return void
      *
-     * @see \evo\debug\Debug::backtrace()
+     * @see Debug::backtrace
      */
-    function debug_backtrace(int $offset=1)
+    function debug_backtrace(int $offset=1): void
     {
         Debug::getInstance(Debug::ALIAS_FUNCTIONS)->backtrace($offset);
     }
