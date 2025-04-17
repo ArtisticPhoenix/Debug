@@ -9,6 +9,7 @@ use ReflectionEnumBackedCase;
 use ReflectionException;
 use ReflectionObject;
 use Throwable;
+use UnitEnum;
 
 /**
  * test
@@ -112,19 +113,19 @@ class Debug implements MultitonInterface
      *
      * @var string
      */
-    protected static string $CASE = 'case';
+    protected static string $READONLY = 'readonly';
+
+    /**
+     *
+     * @var string
+     */
+    protected static string $ABSTRACT = 'abstract';
 
     /**
      *
      * @var string
      */
     protected static string $FINAL = 'final';
-
-    /**
-     *
-     * @var string
-     */
-    protected static string $READONLY = 'readonly';
     
     /**
      *
@@ -315,9 +316,9 @@ class Debug implements MultitonInterface
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
-        
+
         $ln = $this->indentLine();
-        
+
         echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
             $this->getTraceFirstAsString($offset) . $ln .
             str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
@@ -468,9 +469,9 @@ class Debug implements MultitonInterface
     {
         $before = $this->htmlOutput ? '<pre>' : '';
         $after = $this->htmlOutput ? '</pre>' : '';
-        
+
         $ln = $this->indentLine();
-        
+
         echo $before . str_pad("= ".__METHOD__." =", $this->messageWidth, "=", STR_PAD_BOTH) . $ln .
             $this->getTraceFirstAsString($offset) . $ln .
             str_pad("", $this->messageWidth, "-", STR_PAD_BOTH) . $ln .
@@ -554,7 +555,7 @@ class Debug implements MultitonInterface
                 }
                 return $this->templateVar($type, $len, $output);
             case 'object':
-                $final = '';
+                $prefix = '';
                 $output = '';
                 $ob_class = get_class($input);
                 $ob_hash = spl_object_hash($input);
@@ -570,7 +571,7 @@ class Debug implements MultitonInterface
                     ++$level;
 
                     if ($level < $this->depthLimit) {
-                        if($input instanceof \UnitEnum) {
+                        if($input instanceof UnitEnum) {
                             //Enumerators
                             $type = 'enum';
                             $name = $input->name;
@@ -627,7 +628,12 @@ class Debug implements MultitonInterface
                             //typical objects
                             $ReflectionObj = new ReflectionObject($input);
 
-                            $final = $ReflectionObj->isFinal() ? 'final ' : '';
+                            $final = $ReflectionObj->isFinal() ? self::$FINAL : '';
+                            $abstract = $ReflectionObj->isAbstract() ?  self::$ABSTRACT : '';
+                            $readonly = $ReflectionObj->isReadOnly() ? self::$READONLY : '';
+
+                            $prefix = implode(' ', array_filter([$final, $abstract, $readonly]));
+
                             if ($this->hasFlag(self::SHOW_CONSTANTS)) {
                                 //CONSTANTS
                                 foreach ($ReflectionObj->getConstants() as $const_name => $const_value) {
@@ -722,7 +728,7 @@ class Debug implements MultitonInterface
                     $output .= self::$CIRCULAR_REFERENCE;
                 }
                 $args[] = $output;
-                return $final . $this->templateVar($type, ...$args);
+                return $prefix . $this->templateVar($type, ...$args);
             case 'integer':
             case 'unknown type':
             default:
