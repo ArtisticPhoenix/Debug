@@ -188,7 +188,7 @@ The prefer way to install is to include it in you composer.json file as this pro
 ```
 {
    "require" : {
-		"evo/debug" : "~1.0"
+		"evo/debug" : "~ 2.0"
 	}
 }
 ```
@@ -201,7 +201,7 @@ The prefer way to install is to include it in you composer.json file as this pro
   - 1.0.3 - shortened function names
   - 2.0.0 - PHP 8 compatibility
   - 2.1.0 - added method dumpException
-  - 2.2.0 - added method dumpSql, added support for PHP8 Enum objects
+  - 2.2.0 - added method dumpSql, added support for Enum, Final, Readonly and Abstract objects
   
   
   
