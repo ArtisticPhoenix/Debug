@@ -310,7 +310,6 @@ class Debug implements MultitonInterface
      * @param int $offset
      *
      * @return void
-     * @throws ReflectionException
      */
     public function dump(mixed $input=null, int $offset = 0): void
     {
@@ -391,7 +390,6 @@ class Debug implements MultitonInterface
      * @param mixed $input
      * @param int $offset
      * @return string
-     * @throws ReflectionException
      */
     public function export(mixed $input=null, int $offset = 0): string
     {
@@ -463,7 +461,6 @@ class Debug implements MultitonInterface
      *
      * @param mixed $input
      * @param int $offset
-     * @throws ReflectionException
      */
     public function kill(mixed $input=null, int $offset=0) : never
     {
@@ -485,7 +482,6 @@ class Debug implements MultitonInterface
      * output the dump for a variable (no outer formatting)
      *
      * @param mixed $input
-     * @throws ReflectionException
      */
     public function varDump(mixed $input): void
     {
@@ -499,7 +495,6 @@ class Debug implements MultitonInterface
      * @param int $level - current depth level [internal use]
      * @param array $objInstances - map of current object instance [internal]
      * @return string
-     * @throws ReflectionException
      */
     public function varExport(mixed $input, int $level=0, array $objInstances=array()): string
     {
@@ -576,7 +571,11 @@ class Debug implements MultitonInterface
                             $type = 'enum';
                             $name = $input->name;
 
-                            $ReflectionEnum = new ReflectionEnum($input);
+                            try {
+                                $ReflectionEnum = new ReflectionEnum($input);
+                            }catch(ReflectionException $e){
+                                return get_class($e).'::'.$e->getCode().' '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine();
+                            }
 
                             if ($this->hasFlag(self::SHOW_CONSTANTS)) {
                                 //CONSTANTS ["%s":%s] => %s
