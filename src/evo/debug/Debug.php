@@ -382,7 +382,6 @@ class Debug implements MultitonInterface
         
     }
 
-
     /**
      *
      * return debug from an input
